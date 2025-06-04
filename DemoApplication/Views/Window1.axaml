@@ -1,0 +1,17 @@
+<Window
+    x:Class="DemoApplication.Views.Window1"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:icons="clr-namespace:AvaloniaThemeManager.Icons"
+    xmlns:icons1="clr-namespace:AvaloniaThemeManager.Icons;assembly=AvaloniaThemeManager"
+    Title="Validation Errors"
+    Width="500"
+    Height="450"
+    MinWidth="400"
+    MinHeight="300"
+    Background="{DynamicResource BackgroundBrush}"
+    CanResize="True"
+    Icon="avares://AvaloniaThemeManager/Icons/Assets/jonBuilt.ico"
+    ShowInTaskbar="False"
+    SizeToContent="WidthAndHeight"
+    WindowStartupLocation="CenterOwner" />

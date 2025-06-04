@@ -53,10 +53,15 @@ public static AppBuilder BuildAvaloniaApp()
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="YourApp.App">
+    <Application.Resources>
+            <ResourceDictionary>
+            <!-- Include the skin manager ControlTheme resources -->            
+            <ResourceInclude Source="avares://AvaloniaThemeManager/Themes/CustomThemes.axaml" />
+        </ResourceDictionary>
     <Application.Styles>
         <FluentTheme />
         <!-- Include AvaloniaThemeManager styles -->
-        <StyleInclude Source="avares://AvaloniaThemeManager/Themes/CustomThemes.axaml" />
+        
     </Application.Styles>
 </Application>
 ```

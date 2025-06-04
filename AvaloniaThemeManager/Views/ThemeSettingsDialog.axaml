@@ -7,15 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:AvaloniaThemeManager.ViewModels"
     Title="Theme Settings"
-    Width="650"
-    Height="550"
-    MinWidth="600"
-    MinHeight="450"
     d:DesignHeight="500"
     d:DesignWidth="600"
     x:DataType="vm:ThemeSettingsViewModel"
     Background="{DynamicResource BackgroundBrush}"
     Icon="avares://AvaloniaThemeManager/Icons/Assets/jonBuilt.ico"
+    SizeToContent="WidthAndHeight"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
@@ -26,7 +23,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
@@ -61,11 +58,8 @@
             </StackPanel>
         </Border>
 
-        <!--  Main Content  -->
-        <ScrollViewer
-            Grid.Row="1"
-            Padding="20"
-            VerticalScrollBarVisibility="Auto">
+        <Border Grid.Row="1" Padding="20">
+            <!--  Main Content  -->
             <StackPanel Spacing="25">
 
                 <!--  Current Theme Selection  -->
@@ -318,8 +312,7 @@
                 </StackPanel>
 
             </StackPanel>
-        </ScrollViewer>
-
+        </Border>
         <!--  Footer  -->
         <Border
             Grid.Row="2"

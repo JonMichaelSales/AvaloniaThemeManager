@@ -5,25 +5,34 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\Aval
 
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-  <PackageId>AvaloniaThemeManager</PackageId>
-  <Version>1.0.0</Version>
-  <Authors>Your Name</Authors>
-  <Company>Your Company</Company>
-  <Product>AvaloniaThemeManager</Product>
+  <PackageId>AvaloniaSkinManager</PackageId>
+  <Version>1.0.3</Version>
+  <Authors>Jon Sales</Authors>
+  <Company>Independant</Company>
+  <Product>AvaloniaSkinManager</Product>
   <Title>Avalonia Theme Manager</Title>
   <Description>A comprehensive theme management system for Avalonia UI applications with built-in themes, custom theme support, and seamless theme switching capabilities.</Description>
   <PackageTags>avalonia;theme;theming;ui;dark-mode;light-mode;skin</PackageTags>
-  <PackageProjectUrl>https://github.com/yourusername/AvaloniaThemeManager</PackageProjectUrl>
-  <RepositoryUrl>https://github.com/yourusername/AvaloniaThemeManager</RepositoryUrl>
+  <PackageProjectUrl>https://github.com/JonMichaelSales/AvaloniaThemeManager</PackageProjectUrl>
+  <RepositoryUrl>https://github.com/JonMichaelSales/AvaloniaThemeManager</RepositoryUrl>
   <RepositoryType>git</RepositoryType>
   <PackageLicenseExpression>MIT</PackageLicenseExpression>
   <PackageIcon>icon.png</PackageIcon>
   <PackageReadmeFile>README.md</PackageReadmeFile>
   <PackageReleaseNotes>Initial release with comprehensive theme management capabilities.</PackageReleaseNotes>
-  <Copyright>Copyright (c) 2024 Your Name</Copyright>
+  <Copyright>Copyright (c) 2025 Jon Sales</Copyright>
+  <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+  <FileVersion>1.0.0.3</FileVersion>
+  <AssemblyVersion>1.0.0.3</AssemblyVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Icons\Assets\jonBuilt.ico" />
+  </ItemGroup>
 
   <ItemGroup>
+    <AvaloniaResource Include="Icons\Assets\jonBuilt.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
     <AvaloniaResource Include="Themes\Cyberpunk\theme.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
@@ -210,10 +219,15 @@ public static AppBuilder BuildAvaloniaApp()
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="YourApp.App">
+    <Application.Resources>
+            <ResourceDictionary>
+            <!-- Include the skin manager ControlTheme resources -->            
+            <ResourceInclude Source="avares://AvaloniaThemeManager/Themes/CustomThemes.axaml" />
+        </ResourceDictionary>
     <Application.Styles>
         <FluentTheme />
         <!-- Include AvaloniaThemeManager styles -->
-        <StyleInclude Source="avares://AvaloniaThemeManager/Themes/CustomThemes.axaml" />
+        
     </Application.Styles>
 </Application>
 ```
@@ -618,12 +632,11 @@ namespace AvaloniaThemeManager.Extensions
 File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\Extensions\ServiceCollectionExtension.cs
 ================================================================================
 
-// Services/ServiceCollectionExtensions.cs
-
+using AvaloniaThemeManager.Services.Interfaces;
 using AvaloniaThemeManager.Services;
-using AvaloniaThemeManager.Theme;
 using AvaloniaThemeManager.Theme.AvaloniaThemeManager.Theme;
 using AvaloniaThemeManager.Theme.ValidationRules;
+using AvaloniaThemeManager.Theme;
 using AvaloniaThemeManager.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -640,14 +653,6 @@ namespace AvaloniaThemeManager.Extensions
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to which the theme management services will be added.</param>
         /// <returns>The updated <see cref="IServiceCollection"/> with the theme management services registered.</returns>
-        /// <remarks>
-        /// This method registers the following services:
-        /// <list type="bullet">
-        /// <item>Logging services with console output and a minimum log level of Debug.</item>
-        /// <item>Singleton instances of <see cref="SkinManager"/></item>
-        /// <item>Transient instances of <see cref="ThemeSettingsViewModel"/> and <see cref="QuickThemeSwitcherViewModel"/>.</item>
-        /// </list>
-        /// </remarks>
         public static IServiceCollection AddThemeManagerServices(this IServiceCollection services)
         {
             // Logging
@@ -657,10 +662,12 @@ namespace AvaloniaThemeManager.Extensions
                 builder.SetMinimumLevel(LogLevel.Debug);
             });
 
-            // Singletons
-            services.AddSingleton<ISkinManager,SkinManager>();
+            // Core services
+            services.AddSingleton<ISkinManager, SkinManager>();
             services.AddSingleton<IThemeLoaderService, ThemeLoaderService>();
-            services.AddSingleton<IErrorDialogService, ErrorDialogService>();
+            services.AddSingleton<IDialogService, DialogService>(); // Updated service name
+
+            // Validation rules
             services.AddSingleton<IThemeValidationRule, BorderValidationRule>();
             services.AddSingleton<IThemeValidationRule, ColorContrastValidationRule>();
             services.AddSingleton<IThemeValidationRule, NameValidationRule>();
@@ -670,6 +677,22 @@ namespace AvaloniaThemeManager.Extensions
             // ViewModels
             services.AddTransient<ThemeSettingsViewModel>();
             services.AddTransient<QuickThemeSwitcherViewModel>();
+
+            return services;
+        }
+
+        /// <summary>
+        /// Registers theme management services and initializes the static MessageBox.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <returns>The updated service collection.</returns>
+        public static IServiceCollection AddThemeManagerWithMessageBox(this IServiceCollection services)
+        {
+            services.AddThemeManagerServices();
+
+            // Build a temporary provider to initialize MessageBox
+            var provider = services.BuildServiceProvider();
+            MessageBox.Initialize(provider);
 
             return services;
         }
@@ -1313,10 +1336,11 @@ namespace AvaloniaThemeManager.Models
 }
 
 ================================================================================
-File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\Services\ErrorDialogService.cs
+File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\Services\DialogService.cs
 ================================================================================
 
 using Avalonia.Controls;
+using AvaloniaThemeManager.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using AvaloniaThemeManager.Views;
 using AvaloniaThemeManager.Utility;
@@ -1326,61 +1350,20 @@ namespace AvaloniaThemeManager.Services
     /// <summary>
     /// Service for displaying error dialogs and managing user notifications.
     /// </summary>
-    public interface IErrorDialogService
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="title"></param>
-        /// <param name="message"></param>
-        /// <param name="exception"></param>
-        /// <returns></returns>
-        Task ShowErrorAsync(string title, string message, Exception? exception = null);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="title"></param>
-        /// <param name="message"></param>
-        /// <returns></returns>
-        Task ShowWarningAsync(string title, string message);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="title"></param>
-        /// <param name="message"></param>
-        /// <returns></returns>
-        Task ShowInfoAsync(string title, string message);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="title"></param>
-        /// <param name="errors"></param>
-        /// <param name="warnings"></param>
-        /// <returns></returns>
-        Task ShowValidationErrorsAsync(string title, IEnumerable<string> errors, IEnumerable<string> warnings);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="title"></param>
-        /// <param name="message"></param>
-        /// <param name="confirmText"></param>
-        /// <param name="cancelText"></param>
-        /// <returns></returns>
-        Task<bool> ShowConfirmationAsync(string title, string message, string confirmText = "Yes", string cancelText = "No");
-    }
+    
 
     /// <summary>
     /// Implementation of error dialog service using Avalonia dialogs.
     /// </summary>
-    public class ErrorDialogService : IErrorDialogService
+    public class DialogService : IDialogService
     {
-        private readonly ILogger<ErrorDialogService> _logger;
+        private readonly ILogger<DialogService> _logger;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="logger"></param>
-        public ErrorDialogService(ILogger<ErrorDialogService> logger)
+        public DialogService(ILogger<DialogService> logger)
         {
             _logger = logger;
         }
@@ -1516,13 +1499,14 @@ namespace AvaloniaThemeManager.Services
             };
 
             bool? result;
-            if (WindowTools.GetMainWindow() is { } mainWindow)
+            if (WindowTools.TryGetMainWindow() is { } mainWindow)
             {
                 result = await dialog.ShowDialog<bool?>(mainWindow);
             }
             else
             {
-                result = await dialog.ShowDialog<bool?>(null!);
+                dialog.Show();
+                return true;
             }
 
             return result == true;
@@ -1551,9 +1535,164 @@ namespace AvaloniaThemeManager.Services
     }
 }
 ================================================================================
+File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\Services\MessageBox.cs
+================================================================================
+
+using AvaloniaThemeManager.Services.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using Avalonia;
+using Microsoft.Extensions.Logging;
+
+namespace AvaloniaThemeManager.Services
+{
+    /// <summary>
+    /// Provides static methods for displaying dialogs similar to MessageBox.Show().
+    /// </summary>
+    public static class MessageBox
+    {
+        private static IServiceProvider? _serviceProvider;
+        private static IDialogService? _fallbackService;
+
+        /// <summary>
+        /// Initializes the MessageBox with a service provider for dependency resolution.
+        /// Call this during application startup.
+        /// </summary>
+        /// <param name="serviceProvider">The service provider containing the IDialogService registration.</param>
+        public static void Initialize(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
+
+        /// <summary>
+        /// Gets the dialog service instance, creating a fallback if necessary.
+        /// </summary>
+        private static IDialogService GetDialogService()
+        {
+            if (_serviceProvider != null)
+            {
+                try
+                {
+                    return _serviceProvider.GetRequiredService<IDialogService>();
+                }
+                catch
+                {
+                    // Fallback if service not available
+                }
+            }
+
+            // Create fallback service if DI not available
+            if (_fallbackService == null)
+            {
+                var logger = _serviceProvider?.GetService<ILogger<DialogService>>()
+                    ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<DialogService>.Instance;
+                _fallbackService = new DialogService(logger);
+            }
+
+            return _fallbackService;
+        }
+
+        /// <summary>
+        /// Shows an informational dialog.
+        /// </summary>
+        /// <param name="message">The message to display.</param>
+        /// <param name="title">The dialog title. Defaults to "Information".</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public static Task ShowInfoAsync(string message, string title = "Information")
+        {
+            return GetDialogService().ShowInfoAsync(title, message);
+        }
+
+        /// <summary>
+        /// Shows a warning dialog.
+        /// </summary>
+        /// <param name="message">The message to display.</param>
+        /// <param name="title">The dialog title. Defaults to "Warning".</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public static Task ShowWarningAsync(string message, string title = "Warning")
+        {
+            return GetDialogService().ShowWarningAsync(title, message);
+        }
+
+        /// <summary>
+        /// Shows an error dialog.
+        /// </summary>
+        /// <param name="message">The message to display.</param>
+        /// <param name="title">The dialog title. Defaults to "Error".</param>
+        /// <param name="exception">Optional exception details.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public static Task ShowErrorAsync(string message, string title = "Error", Exception? exception = null)
+        {
+            return GetDialogService().ShowErrorAsync(title, message, exception);
+        }
+
+        /// <summary>
+        /// Shows a confirmation dialog.
+        /// </summary>
+        /// <param name="message">The message to display.</param>
+        /// <param name="title">The dialog title. Defaults to "Confirmation".</param>
+        /// <param name="confirmText">Text for the confirm button. Defaults to "Yes".</param>
+        /// <param name="cancelText">Text for the cancel button. Defaults to "No".</param>
+        /// <returns>A task representing the asynchronous operation with the user's choice.</returns>
+        public static Task<bool> ShowConfirmationAsync(string message, string title = "Confirmation",
+            string confirmText = "Yes", string cancelText = "No")
+        {
+            return GetDialogService().ShowConfirmationAsync(title, message, confirmText, cancelText);
+        }
+
+        /// <summary>
+        /// Shows a validation errors dialog.
+        /// </summary>
+        /// <param name="errors">Collection of error messages.</param>
+        /// <param name="warnings">Collection of warning messages.</param>
+        /// <param name="title">The dialog title. Defaults to "Validation Issues".</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public static Task ShowValidationErrorsAsync(IEnumerable<string> errors, IEnumerable<string> warnings,
+            string title = "Validation Issues")
+        {
+            return GetDialogService().ShowValidationErrorsAsync(title, errors, warnings);
+        }
+
+        // Synchronous versions for compatibility (use carefully - may block UI)
+
+        /// <summary>
+        /// Shows an informational dialog synchronously. Use async version when possible.
+        /// </summary>
+        public static void ShowInfo(string message, string title = "Information")
+        {
+            ShowInfoAsync(message, title).GetAwaiter().GetResult();
+        }
+
+        /// <summary>
+        /// Shows a warning dialog synchronously. Use async version when possible.
+        /// </summary>
+        public static void ShowWarning(string message, string title = "Warning")
+        {
+            ShowWarningAsync(message, title).GetAwaiter().GetResult();
+        }
+
+        /// <summary>
+        /// Shows an error dialog synchronously. Use async version when possible.
+        /// </summary>
+        public static void ShowError(string message, string title = "Error", Exception? exception = null)
+        {
+            ShowErrorAsync(message, title, exception).GetAwaiter().GetResult();
+        }
+
+        /// <summary>
+        /// Shows a confirmation dialog synchronously. Use async version when possible.
+        /// </summary>
+        public static bool ShowConfirmation(string message, string title = "Confirmation",
+            string confirmText = "Yes", string cancelText = "No")
+        {
+            return ShowConfirmationAsync(message, title, confirmText, cancelText).GetAwaiter().GetResult();
+        }
+    }
+}
+================================================================================
 File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\Services\ThemeLoaderService.cs
 ================================================================================
 
+using Avalonia.Platform;
 using AvaloniaThemeManager.Theme;
 using System.Text.Json;
 
@@ -1589,12 +1728,17 @@ namespace AvaloniaThemeManager.Services
     /// </remarks>
     public class ThemeLoaderService : IThemeLoaderService
     {
+
+        // List of known embedded themes (keep in sync with package)
+        private readonly string[] _embeddedThemes = new[]
+        {
+            "Dark", "Light", "Ocean Blue", "Cyberpunk",
+            "RetroTerminal", "Purple Haze", "Forest Green", "High Contrast", "ModernIce"
+        };
+
         /// <summary>
         /// Loads a collection of <see cref="Skin"/> objects from the specified root directory.
         /// </summary>
-        /// <param name="themesRoot">
-        /// The root directory containing theme definitions and associated resources.
-        /// </param>
         /// <returns>
         /// A list of <see cref="Skin"/> objects representing the loaded themes.
         /// </returns>
@@ -1604,55 +1748,54 @@ namespace AvaloniaThemeManager.Services
         /// containing .axaml files. The method parses these resources and constructs <see cref="Skin"/> objects
         /// with appropriate URIs for control themes and styles.
         /// </remarks>
-        public List<Skin> LoadSkins(string themesRoot)
+        public List<Skin> LoadSkins(string _ = "")
         {
+            var jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
             var skins = new List<Skin>();
 
-            foreach (var dir in Directory.GetDirectories(themesRoot))
+            foreach (var themeName in _embeddedThemes)
             {
-                var jsonPath = Path.Combine(dir, "theme.json");
-                if (!File.Exists(jsonPath)) continue;
+                var basePath = $"avares://AvaloniaThemeManager/Themes/{themeName}";
+                var themeJsonPath = $"{basePath}/theme.json";
 
-                var json = File.ReadAllText(jsonPath);
-                var serializableTheme = JsonSerializer.Deserialize<SerializableTheme>(json, new JsonSerializerOptions
+                try
                 {
-                    PropertyNameCaseInsensitive = true
-                });
+                    using var stream = AssetLoader.Open(new Uri(themeJsonPath));
+                    using var reader = new StreamReader(stream);
+                    var json = reader.ReadToEnd();
 
-                if (serializableTheme is null) continue;
+                    var serializableTheme = JsonSerializer.Deserialize<SerializableTheme>(json, jsonOptions);
+                    if (serializableTheme is null) continue;
 
-                var skin = serializableTheme.ToSkin();
+                    var skin = serializableTheme.ToSkin();
 
-                // Load ControlTheme URIs
-                var controlDir = Path.Combine(dir, "ControlThemes");
-                if (Directory.Exists(controlDir))
-                {
-                    foreach (var file in Directory.GetFiles(controlDir, "*.axaml"))
+                    // Load ControlTheme resources
+                    var controlThemes = new[]
                     {
-                        var key = Path.GetFileNameWithoutExtension(file);
-                        skin.ControlThemeUris[key] = $"avares://AvaloniaThemeManager/{Path.GetFileName(dir)}/ControlThemes/{Path.GetFileName(file)}";
-                    }
-                }
+                        "Button", "TextBlock", "TextBox", "CheckBox",
+                        "ComboBox", "Expander", "Slider", "TabControl"
+                    };
 
-                // Load style URIs
-                var styleDir = Path.Combine(dir, "Styles");
-                if (Directory.Exists(styleDir))
-                {
-                    foreach (var file in Directory.GetFiles(styleDir, "*.axaml"))
+                    foreach (var key in controlThemes)
                     {
-                        skin.StyleUris.Add(Path.GetFileNameWithoutExtension(file),
-                            $"avares://AvaloniaThemeManager/{Path.GetFileName(dir)}/Styles/{Path.GetFileName(file)}");
+                        var controlPath = $"{basePath}/ControlThemes/{key}.axaml";
+                        skin.ControlThemeUris[key] = controlPath;
                     }
-                }
 
-                skins.Add(skin);
+                    skins.Add(skin);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to load theme '{themeName}': {ex.Message}");
+                }
             }
 
             return skins;
         }
     }
-
-
 }
 
 ================================================================================
@@ -6757,26 +6900,34 @@ namespace AvaloniaThemeManager.Utility
     /// </summary>
     public static class WindowTools
     {
-
         /// <summary>
-        /// Retrieves the main window of the application.
+        /// Attempts to retrieve the main application <see cref="Window"/>.
         /// </summary>
         /// <returns>
-        /// The main <see cref="Window"/> instance of the application.
+        /// The main <see cref="Window"/> instance of the application if available; otherwise, <c>null</c>.
         /// </returns>
-        /// <exception cref="InvalidOperationException">
-        /// Thrown if the application lifetime is not of type <see cref="IClassicDesktopStyleApplicationLifetime"/> 
-        /// or if the main window is not available.
-        /// </exception>
-        public static Window GetMainWindow()
+        public static Window? TryGetMainWindow()
         {
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                return desktop.MainWindow ?? throw new InvalidOperationException("Main window is not available");
+                return desktop.MainWindow;
             }
-            throw new InvalidOperationException("Application lifetime is not desktop style");
+            return null;
+        }
+
+        /// <summary>
+        /// Retrieves the main application window.
+        /// </summary>
+        /// <returns>The main <see cref="Window"/> instance of the application.</returns>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when the main window is not available.
+        /// </exception>
+        public static Window GetMainWindow()
+        {
+            return TryGetMainWindow() ?? throw new InvalidOperationException("Main window is not available");
         }
     }
+
 }
 
 ================================================================================
@@ -7288,6 +7439,7 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
     CanResize="False"
     Icon="avares://AvaloniaThemeManager/Icons/Assets/jonBuilt.ico"
     ShowInTaskbar="False"
+    SizeToContent="WidthAndHeight"
     WindowStartupLocation="CenterOwner">
 
     <Grid>
@@ -7485,10 +7637,12 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
     Height="400"
     MinWidth="400"
     MinHeight="300"
+    MaxHeight="700"
     Background="{DynamicResource BackgroundBrush}"
     CanResize="True"
     Icon="avares://AvaloniaThemeManager/Icons/Assets/jonBuilt.ico"
     ShowInTaskbar="False"
+    SizeToContent="Height"
     WindowStartupLocation="CenterOwner">
 
     <Grid>
@@ -7523,73 +7677,72 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
         </Border>
 
         <!--  Content  -->
-        <ScrollViewer
+        <StackPanel
             Grid.Row="1"
-            Padding="20"
-            VerticalScrollBarVisibility="Auto">
-            <StackPanel Spacing="15">
-                <!--  Main Message  -->
-                <TextBlock
-                    x:Name="MessageText"
-                    FontSize="14"
-                    Foreground="{DynamicResource TextPrimaryBrush}"
-                    TextWrapping="Wrap" />
+            Margin="20"
+            Spacing="15">
 
-                <!--  Exception Details Expander  -->
-                <Expander
-                    x:Name="ExceptionExpander"
-                    Header="Technical Details"
-                    IsVisible="False">
-                    <Border
-                        Margin="0,10,0,0"
-                        Padding="12"
-                        Background="{DynamicResource BackgroundLightBrush}"
-                        BorderBrush="{DynamicResource BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="4">
-                        <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
-                            <TextBlock
-                                x:Name="ExceptionText"
-                                FontFamily="Consolas, Monaco, 'Courier New', monospace"
-                                FontSize="11"
-                                Foreground="{DynamicResource TextSecondaryBrush}"
-                                TextWrapping="Wrap" />
-                        </ScrollViewer>
-                    </Border>
-                </Expander>
+            <!--  Main Message  -->
+            <TextBlock
+                x:Name="MessageText"
+                FontSize="14"
+                Foreground="{DynamicResource TextPrimaryBrush}"
+                TextWrapping="Wrap" />
 
-                <!--  Help Text  -->
+            <!--  Exception Details Expander  -->
+            <Expander
+                x:Name="ExceptionExpander"
+                Header="Technical Details"
+                IsVisible="False">
                 <Border
+                    Margin="0,10,0,0"
                     Padding="12"
                     Background="{DynamicResource BackgroundLightBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="4">
-                    <StackPanel Spacing="8">
+                    <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
                         <TextBlock
-                            FontSize="12"
-                            FontWeight="Medium"
-                            Foreground="{DynamicResource TextPrimaryBrush}"
-                            Text="What you can do:" />
-                        <TextBlock
+                            x:Name="ExceptionText"
+                            FontFamily="Consolas, Monaco, 'Courier New', monospace"
                             FontSize="11"
                             Foreground="{DynamicResource TextSecondaryBrush}"
-                            Text="• Try the operation again"
                             TextWrapping="Wrap" />
-                        <TextBlock
-                            FontSize="11"
-                            Foreground="{DynamicResource TextSecondaryBrush}"
-                            Text="• Check if the file or resource is accessible"
-                            TextWrapping="Wrap" />
-                        <TextBlock
-                            FontSize="11"
-                            Foreground="{DynamicResource TextSecondaryBrush}"
-                            Text="• If the problem persists, please report this error"
-                            TextWrapping="Wrap" />
-                    </StackPanel>
+                    </ScrollViewer>
                 </Border>
-            </StackPanel>
-        </ScrollViewer>
+            </Expander>
+
+            <!--  Help Text  -->
+            <Border
+                Padding="12"
+                Background="{DynamicResource BackgroundLightBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+                <StackPanel Spacing="8">
+                    <TextBlock
+                        FontSize="12"
+                        FontWeight="Medium"
+                        Foreground="{DynamicResource TextPrimaryBrush}"
+                        Text="What you can do:" />
+                    <TextBlock
+                        FontSize="11"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="• Try the operation again"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        FontSize="11"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="• Check if the file or resource is accessible"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        FontSize="11"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="• If the problem persists, please report this error"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
 
         <!--  Footer  -->
         <Border
@@ -7949,12 +8102,8 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
     xmlns:icons="clr-namespace:AvaloniaThemeManager.Icons"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:AvaloniaThemeManager.ViewModels"
-    Width="1400"
-    Height="900"
     MinWidth="1200"
     MinHeight="700"
-    d:DesignHeight="900"
-    d:DesignWidth="1400"
     x:DataType="vm:ThemeSettingsViewModel"
     Background="{DynamicResource BackgroundBrush}"
     mc:Ignorable="d">
@@ -8036,9 +8185,10 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
         <!--  Main Content Area  -->
         <ScrollViewer
             Grid.Row="1"
-            Padding="20"
+            Margin="25"
+            Padding="0,25,0,25"
             VerticalScrollBarVisibility="Auto">
-            <StackPanel Spacing="30">
+            <StackPanel>
 
                 <!--  Typography Showcase  -->
                 <Border Theme="{StaticResource CardBorderTheme}">
@@ -8761,8 +8911,8 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
                 </Border>
 
                 <!--  Interactive Demo Section  -->
-                <Border Theme="{StaticResource CardBorderTheme}">
-                    <StackPanel Spacing="20">
+                <Border Margin="0,0,0,0" Theme="{StaticResource CardBorderTheme}">
+                    <StackPanel>
                         <TextBlock Text="Interactive Demo" Theme="{StaticResource SectionHeaderTheme}" />
 
                         <Grid>
@@ -8771,10 +8921,7 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <StackPanel
-                                Grid.Column="0"
-                                Margin="0,0,10,0"
-                                Spacing="15">
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
                                 <TextBlock Text="Theme Actions" Theme="{StaticResource SubheaderTextBlockTheme}" />
                                 <StackPanel Spacing="10">
                                     <Button
@@ -8840,7 +8987,10 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
         </ScrollViewer>
 
         <!--  Status Bar  -->
-        <Border Grid.Row="2" Theme="{StaticResource StatusBarBorderTheme}">
+        <Border
+            Grid.Row="2"
+            Margin="0,0"
+            Theme="{StaticResource StatusBarBorderTheme}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -8888,6 +9038,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using AvaloniaThemeManager.Services;
+using AvaloniaThemeManager.Services.Interfaces;
 using AvaloniaThemeManager.Theme;
 using AvaloniaThemeManager.Theme.AvaloniaThemeManager.Theme;
 using AvaloniaThemeManager.Utility;
@@ -8907,7 +9058,7 @@ namespace AvaloniaThemeManager.Views
     public partial class ThemeManagerDemoView : UserControl
     {
         private readonly ILogger _logger;
-        private readonly IErrorDialogService? _errorDialogService;
+        private readonly IDialogService? _errorDialogService;
 
         /// <summary>
         /// Initializes a new instance of the ThemeManagerDemoView with default services.
@@ -8916,6 +9067,8 @@ namespace AvaloniaThemeManager.Views
             Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance,
             null)
         {
+
+            
         }
 
         /// <summary>
@@ -8923,7 +9076,7 @@ namespace AvaloniaThemeManager.Views
         /// </summary>
         /// <param name="logger">Logger instance for tracking demo interactions and errors</param>
         /// <param name="errorDialogService">Service for displaying error dialogs (optional)</param>
-        public ThemeManagerDemoView(ILogger logger, IErrorDialogService? errorDialogService = null)
+        public ThemeManagerDemoView(ILogger logger, IDialogService? errorDialogService = null)
         {
             _logger = logger;
             _errorDialogService = errorDialogService;
@@ -9400,15 +9553,12 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:AvaloniaThemeManager.ViewModels"
     Title="Theme Settings"
-    Width="650"
-    Height="550"
-    MinWidth="600"
-    MinHeight="450"
     d:DesignHeight="500"
     d:DesignWidth="600"
     x:DataType="vm:ThemeSettingsViewModel"
     Background="{DynamicResource BackgroundBrush}"
     Icon="avares://AvaloniaThemeManager/Icons/Assets/jonBuilt.ico"
+    SizeToContent="WidthAndHeight"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
@@ -9419,7 +9569,7 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
@@ -9454,11 +9604,8 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
             </StackPanel>
         </Border>
 
-        <!--  Main Content  -->
-        <ScrollViewer
-            Grid.Row="1"
-            Padding="20"
-            VerticalScrollBarVisibility="Auto">
+        <Border Grid.Row="1" Padding="20">
+            <!--  Main Content  -->
             <StackPanel Spacing="25">
 
                 <!--  Current Theme Selection  -->
@@ -9711,8 +9858,7 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
                 </StackPanel>
 
             </StackPanel>
-        </ScrollViewer>
-
+        </Border>
         <!--  Footer  -->
         <Border
             Grid.Row="2"
@@ -9806,14 +9952,12 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:icons="clr-namespace:AvaloniaThemeManager.Icons"
     Title="Validation Errors"
-    Width="500"
-    Height="450"
-    MinWidth="400"
     MinHeight="300"
     Background="{DynamicResource BackgroundBrush}"
     CanResize="True"
     Icon="avares://AvaloniaThemeManager/Icons/Assets/jonBuilt.ico"
     ShowInTaskbar="False"
+    SizeToContent="WidthAndHeight"
     WindowStartupLocation="CenterOwner">
 
     <Grid>
@@ -9848,75 +9992,75 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
         </Border>
 
         <!--  Content  -->
-        <ScrollViewer
+        <StackPanel
             Grid.Row="1"
-            Padding="20"
-            VerticalScrollBarVisibility="Auto">
-            <StackPanel Spacing="20">
+            Margin="20"
+            Spacing="20">
 
-                <!--  Summary  -->
-                <Border
-                    Padding="15"
-                    Background="{DynamicResource BackgroundLightBrush}"
-                    BorderBrush="{DynamicResource BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="4">
-                    <StackPanel Spacing="8">
-                        <TextBlock
-                            FontSize="14"
-                            FontWeight="Medium"
-                            Foreground="{DynamicResource TextPrimaryBrush}"
-                            Text="Validation Summary" />
-                        <StackPanel Orientation="Horizontal" Spacing="20">
-                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                <Path
-                                    Width="16"
-                                    Height="16"
-                                    Data="{x:Static icons:ApplicationIcons.ErrorGeometry}"
-                                    Fill="{DynamicResource ErrorBrush}"
-                                    Stretch="Uniform" />
-                                <TextBlock
-                                    x:Name="ErrorCountText"
-                                    FontSize="12"
-                                    Foreground="{DynamicResource TextSecondaryBrush}"
-                                    Text="0 Errors" />
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                <Path
-                                    Width="16"
-                                    Height="16"
-                                    Data="{x:Static icons:ApplicationIcons.WarningGeometry}"
-                                    Fill="{DynamicResource WarningBrush}"
-                                    Stretch="Uniform" />
-                                <TextBlock
-                                    x:Name="WarningCountText"
-                                    FontSize="12"
-                                    Foreground="{DynamicResource TextSecondaryBrush}"
-                                    Text="0 Warnings" />
-                            </StackPanel>
+            <!--  Summary  -->
+            <Border
+                Padding="15"
+                Background="{DynamicResource BackgroundLightBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+                <StackPanel Spacing="8">
+                    <TextBlock
+                        FontSize="14"
+                        FontWeight="Medium"
+                        Foreground="{DynamicResource TextPrimaryBrush}"
+                        Text="Validation Summary" />
+                    <StackPanel Orientation="Horizontal" Spacing="20">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <Path
+                                Width="16"
+                                Height="16"
+                                Data="{x:Static icons:ApplicationIcons.ErrorGeometry}"
+                                Fill="{DynamicResource ErrorBrush}"
+                                Stretch="Uniform" />
+                            <TextBlock
+                                x:Name="ErrorCountText"
+                                FontSize="12"
+                                Foreground="{DynamicResource TextSecondaryBrush}"
+                                Text="0 Errors" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <Path
+                                Width="16"
+                                Height="16"
+                                Data="{x:Static icons:ApplicationIcons.WarningGeometry}"
+                                Fill="{DynamicResource WarningBrush}"
+                                Stretch="Uniform" />
+                            <TextBlock
+                                x:Name="WarningCountText"
+                                FontSize="12"
+                                Foreground="{DynamicResource TextSecondaryBrush}"
+                                Text="0 Warnings" />
                         </StackPanel>
                     </StackPanel>
-                </Border>
+                </StackPanel>
+            </Border>
 
-                <!--  Errors Section  -->
-                <StackPanel x:Name="ErrorsSection" Spacing="10">
-                    <StackPanel
-                        x:Name="ErrorsHeader"
-                        Orientation="Horizontal"
-                        Spacing="8">
-                        <Path
-                            Width="20"
-                            Height="20"
-                            Data="{x:Static icons:ApplicationIcons.ErrorGeometry}"
-                            Fill="{DynamicResource ErrorBrush}"
-                            Stretch="Uniform" />
-                        <TextBlock
-                            FontSize="16"
-                            FontWeight="SemiBold"
-                            Foreground="{DynamicResource ErrorBrush}"
-                            Text="Errors" />
-                    </StackPanel>
+            <!--  Errors Section  -->
+            <StackPanel x:Name="ErrorsSection" Spacing="10">
+                <StackPanel
+                    x:Name="ErrorsHeader"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <Path
+                        Width="20"
+                        Height="20"
+                        Data="{x:Static icons:ApplicationIcons.ErrorGeometry}"
+                        Fill="{DynamicResource ErrorBrush}"
+                        Stretch="Uniform" />
+                    <TextBlock
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource ErrorBrush}"
+                        Text="Errors" />
+                </StackPanel>
 
+                <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto">
                     <ItemsControl x:Name="ErrorsList">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -9945,27 +10089,29 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+
+            <!--  Warnings Section  -->
+            <StackPanel x:Name="WarningsSection" Spacing="10">
+                <StackPanel
+                    x:Name="WarningsHeader"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <Path
+                        Width="20"
+                        Height="20"
+                        Data="{x:Static icons:ApplicationIcons.WarningGeometry}"
+                        Fill="{DynamicResource WarningBrush}"
+                        Stretch="Uniform" />
+                    <TextBlock
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource WarningBrush}"
+                        Text="Warnings" />
                 </StackPanel>
 
-                <!--  Warnings Section  -->
-                <StackPanel x:Name="WarningsSection" Spacing="10">
-                    <StackPanel
-                        x:Name="WarningsHeader"
-                        Orientation="Horizontal"
-                        Spacing="8">
-                        <Path
-                            Width="20"
-                            Height="20"
-                            Data="{x:Static icons:ApplicationIcons.WarningGeometry}"
-                            Fill="{DynamicResource WarningBrush}"
-                            Stretch="Uniform" />
-                        <TextBlock
-                            FontSize="16"
-                            FontWeight="SemiBold"
-                            Foreground="{DynamicResource WarningBrush}"
-                            Text="Warnings" />
-                    </StackPanel>
-
+                <ScrollViewer MaxHeight="150" VerticalScrollBarVisibility="Auto">
                     <ItemsControl x:Name="WarningsList">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -9994,41 +10140,41 @@ File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\View
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                </StackPanel>
-
-                <!--  Help Text  -->
-                <Border
-                    Padding="15"
-                    Background="{DynamicResource BackgroundLightBrush}"
-                    BorderBrush="{DynamicResource BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="4">
-                    <StackPanel Spacing="8">
-                        <TextBlock
-                            FontSize="12"
-                            FontWeight="Medium"
-                            Foreground="{DynamicResource TextPrimaryBrush}"
-                            Text="What these mean:" />
-                        <TextBlock
-                            FontSize="11"
-                            Foreground="{DynamicResource TextSecondaryBrush}"
-                            Text="• Errors must be fixed before the theme can be applied"
-                            TextWrapping="Wrap" />
-                        <TextBlock
-                            FontSize="11"
-                            Foreground="{DynamicResource TextSecondaryBrush}"
-                            Text="• Warnings indicate potential issues but don't prevent theme usage"
-                            TextWrapping="Wrap" />
-                        <TextBlock
-                            FontSize="11"
-                            Foreground="{DynamicResource TextSecondaryBrush}"
-                            Text="• Fix these issues to ensure optimal appearance and accessibility"
-                            TextWrapping="Wrap" />
-                    </StackPanel>
-                </Border>
-
+                </ScrollViewer>
             </StackPanel>
-        </ScrollViewer>
+
+            <!--  Help Text  -->
+            <Border
+                Padding="15"
+                Background="{DynamicResource BackgroundLightBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+                <StackPanel Spacing="8">
+                    <TextBlock
+                        FontSize="12"
+                        FontWeight="Medium"
+                        Foreground="{DynamicResource TextPrimaryBrush}"
+                        Text="What these mean:" />
+                    <TextBlock
+                        FontSize="11"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="• Errors must be fixed before the theme can be applied"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        FontSize="11"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="• Warnings indicate potential issues but don't prevent theme usage"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        FontSize="11"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="• Fix these issues to ensure optimal appearance and accessibility"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
 
         <!--  Footer  -->
         <Border
@@ -10182,6 +10328,67 @@ namespace AvaloniaThemeManager.Views
         }
     }
 }
+================================================================================
+File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\Services\Interfaces\IDialogService.cs
+================================================================================
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AvaloniaThemeManager.Services.Interfaces
+{
+    /// <summary>
+    /// Provides methods for displaying various types of dialog messages, such as errors, warnings, informational messages, 
+    /// validation errors, and confirmation prompts, to the user.
+    /// </summary>
+    public interface IDialogService
+    {
+        /// <summary>
+        /// Displays an error dialog to the user with the specified title, message, and optional exception details.
+        /// </summary>
+        /// <param name="title">The title of the error dialog.</param>
+        /// <param name="message">The message to display in the error dialog.</param>
+        /// <param name="exception">An optional exception providing additional details about the error.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        Task ShowErrorAsync(string title, string message, Exception? exception = null);
+        /// <summary>
+        /// Displays a warning dialog to the user with the specified title and message.
+        /// </summary>
+        /// <param name="title">The title of the warning dialog.</param>
+        /// <param name="message">The message to display in the warning dialog.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        Task ShowWarningAsync(string title, string message);
+        /// <summary>
+        /// Displays an informational dialog to the user with the specified title and message.
+        /// </summary>
+        /// <param name="title">The title of the informational dialog.</param>
+        /// <param name="message">The message to display in the informational dialog.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        Task ShowInfoAsync(string title, string message);
+        /// <summary>
+        /// Displays a validation error dialog to the user with the specified title, 
+        /// a list of error messages, and a list of warning messages.
+        /// </summary>
+        /// <param name="title">The title of the validation error dialog.</param>
+        /// <param name="errors">A collection of error messages to display in the dialog.</param>
+        /// <param name="warnings">A collection of warning messages to display in the dialog.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        Task ShowValidationErrorsAsync(string title, IEnumerable<string> errors, IEnumerable<string> warnings);
+        /// <summary>
+        /// Displays a confirmation dialog to the user with the specified title, message, and customizable confirmation and cancellation button texts.
+        /// </summary>
+        /// <param name="title">The title of the confirmation dialog.</param>
+        /// <param name="message">The message to display in the confirmation dialog.</param>
+        /// <param name="confirmText">The text to display on the confirmation button. Defaults to "Yes".</param>
+        /// <param name="cancelText">The text to display on the cancellation button. Defaults to "No".</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a boolean value indicating whether the user confirmed (true) or canceled (false) the action.</returns>
+        Task<bool> ShowConfirmationAsync(string title, string message, string confirmText = "Yes", string cancelText = "No");
+    }
+}
+
 ================================================================================
 File: C:\Users\jonms\source\repos\AvaloniaThemeManager\AvaloniaThemeManager\Theme\ValidationRules\AccessibilityValidationRule.cs
 ================================================================================

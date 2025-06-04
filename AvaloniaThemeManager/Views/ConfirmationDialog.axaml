@@ -12,6 +12,7 @@
     CanResize="False"
     Icon="avares://AvaloniaThemeManager/Icons/Assets/jonBuilt.ico"
     ShowInTaskbar="False"
+    SizeToContent="WidthAndHeight"
     WindowStartupLocation="CenterOwner">
 
     <Grid>

@@ -14,15 +14,15 @@ namespace AvaloniaThemeManager.Services
     /// <summary>
     /// Implementation of error dialog service using Avalonia dialogs.
     /// </summary>
-    public class ErrorDialogService : IErrorDialogService
+    public class DialogService : IDialogService
     {
-        private readonly ILogger<ErrorDialogService> _logger;
+        private readonly ILogger<DialogService> _logger;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="logger"></param>
-        public ErrorDialogService(ILogger<ErrorDialogService> logger)
+        public DialogService(ILogger<DialogService> logger)
         {
             _logger = logger;
         }

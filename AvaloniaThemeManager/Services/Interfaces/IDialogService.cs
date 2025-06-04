@@ -10,7 +10,7 @@ namespace AvaloniaThemeManager.Services.Interfaces
     /// Provides methods for displaying various types of dialog messages, such as errors, warnings, informational messages, 
     /// validation errors, and confirmation prompts, to the user.
     /// </summary>
-    public interface IErrorDialogService
+    public interface IDialogService
     {
         /// <summary>
         /// Displays an error dialog to the user with the specified title, message, and optional exception details.

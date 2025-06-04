@@ -18,7 +18,7 @@ namespace DemoApplication.Views
     public partial class MainWindow : Window
     {
         private readonly ThemeSettingsViewModel _viewModel;
-        private readonly IErrorDialogService _dialogService;
+        private readonly IDialogService _dialogService;
 
         /// <summary>
         /// Initializes a new instance of the ThemeManagerDemoView class.
@@ -29,8 +29,8 @@ namespace DemoApplication.Views
 
             // Initialize ViewModel and services
             _viewModel = new ThemeSettingsViewModel();
-            _dialogService = new ErrorDialogService(
-                Microsoft.Extensions.Logging.Abstractions.NullLogger<ErrorDialogService>.Instance);
+            _dialogService = new DialogService(
+                Microsoft.Extensions.Logging.Abstractions.NullLogger<DialogService>.Instance);
 
             DataContext = _viewModel;
 

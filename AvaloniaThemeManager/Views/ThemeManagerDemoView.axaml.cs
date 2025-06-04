@@ -24,7 +24,7 @@ namespace AvaloniaThemeManager.Views
     public partial class ThemeManagerDemoView : UserControl
     {
         private readonly ILogger _logger;
-        private readonly IErrorDialogService? _errorDialogService;
+        private readonly IDialogService? _errorDialogService;
 
         /// <summary>
         /// Initializes a new instance of the ThemeManagerDemoView with default services.
@@ -42,7 +42,7 @@ namespace AvaloniaThemeManager.Views
         /// </summary>
         /// <param name="logger">Logger instance for tracking demo interactions and errors</param>
         /// <param name="errorDialogService">Service for displaying error dialogs (optional)</param>
-        public ThemeManagerDemoView(ILogger logger, IErrorDialogService? errorDialogService = null)
+        public ThemeManagerDemoView(ILogger logger, IDialogService? errorDialogService = null)
         {
             _logger = logger;
             _errorDialogService = errorDialogService;

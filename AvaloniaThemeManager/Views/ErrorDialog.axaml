@@ -8,10 +8,12 @@
     Height="400"
     MinWidth="400"
     MinHeight="300"
+    MaxHeight="700"
     Background="{DynamicResource BackgroundBrush}"
     CanResize="True"
     Icon="avares://AvaloniaThemeManager/Icons/Assets/jonBuilt.ico"
     ShowInTaskbar="False"
+    SizeToContent="Height"
     WindowStartupLocation="CenterOwner">
 
     <Grid>
@@ -46,73 +48,72 @@
         </Border>
 
         <!--  Content  -->
-        <ScrollViewer
+        <StackPanel
             Grid.Row="1"
-            Padding="20"
-            VerticalScrollBarVisibility="Auto">
-            <StackPanel Spacing="15">
-                <!--  Main Message  -->
-                <TextBlock
-                    x:Name="MessageText"
-                    FontSize="14"
-                    Foreground="{DynamicResource TextPrimaryBrush}"
-                    TextWrapping="Wrap" />
+            Margin="20"
+            Spacing="15">
 
-                <!--  Exception Details Expander  -->
-                <Expander
-                    x:Name="ExceptionExpander"
-                    Header="Technical Details"
-                    IsVisible="False">
-                    <Border
-                        Margin="0,10,0,0"
-                        Padding="12"
-                        Background="{DynamicResource BackgroundLightBrush}"
-                        BorderBrush="{DynamicResource BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="4">
-                        <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
-                            <TextBlock
-                                x:Name="ExceptionText"
-                                FontFamily="Consolas, Monaco, 'Courier New', monospace"
-                                FontSize="11"
-                                Foreground="{DynamicResource TextSecondaryBrush}"
-                                TextWrapping="Wrap" />
-                        </ScrollViewer>
-                    </Border>
-                </Expander>
+            <!--  Main Message  -->
+            <TextBlock
+                x:Name="MessageText"
+                FontSize="14"
+                Foreground="{DynamicResource TextPrimaryBrush}"
+                TextWrapping="Wrap" />
 
-                <!--  Help Text  -->
+            <!--  Exception Details Expander  -->
+            <Expander
+                x:Name="ExceptionExpander"
+                Header="Technical Details"
+                IsVisible="False">
                 <Border
+                    Margin="0,10,0,0"
                     Padding="12"
                     Background="{DynamicResource BackgroundLightBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="4">
-                    <StackPanel Spacing="8">
+                    <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto">
                         <TextBlock
-                            FontSize="12"
-                            FontWeight="Medium"
-                            Foreground="{DynamicResource TextPrimaryBrush}"
-                            Text="What you can do:" />
-                        <TextBlock
+                            x:Name="ExceptionText"
+                            FontFamily="Consolas, Monaco, 'Courier New', monospace"
                             FontSize="11"
                             Foreground="{DynamicResource TextSecondaryBrush}"
-                            Text="• Try the operation again"
                             TextWrapping="Wrap" />
-                        <TextBlock
-                            FontSize="11"
-                            Foreground="{DynamicResource TextSecondaryBrush}"
-                            Text="• Check if the file or resource is accessible"
-                            TextWrapping="Wrap" />
-                        <TextBlock
-                            FontSize="11"
-                            Foreground="{DynamicResource TextSecondaryBrush}"
-                            Text="• If the problem persists, please report this error"
-                            TextWrapping="Wrap" />
-                    </StackPanel>
+                    </ScrollViewer>
                 </Border>
-            </StackPanel>
-        </ScrollViewer>
+            </Expander>
+
+            <!--  Help Text  -->
+            <Border
+                Padding="12"
+                Background="{DynamicResource BackgroundLightBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+                <StackPanel Spacing="8">
+                    <TextBlock
+                        FontSize="12"
+                        FontWeight="Medium"
+                        Foreground="{DynamicResource TextPrimaryBrush}"
+                        Text="What you can do:" />
+                    <TextBlock
+                        FontSize="11"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="• Try the operation again"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        FontSize="11"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="• Check if the file or resource is accessible"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        FontSize="11"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="• If the problem persists, please report this error"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
 
         <!--  Footer  -->
         <Border

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
   <PackageId>AvaloniaSkinManager</PackageId>
-  <Version>1.0.3</Version>
+  <Version>1.0.4</Version>
   <Authors>Jon Sales</Authors>
   <Company>Independant</Company>
   <Product>AvaloniaSkinManager</Product>
@@ -17,39 +17,29 @@
   <PackageReleaseNotes>Initial release with comprehensive theme management capabilities.</PackageReleaseNotes>
   <Copyright>Copyright (c) 2025 Jon Sales</Copyright>
   <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-  <FileVersion>1.0.0.3</FileVersion>
-  <AssemblyVersion>1.0.0.3</AssemblyVersion>
+  <FileVersion>1.0.0.4</FileVersion>
+  <AssemblyVersion>1.0.0.4</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Icons\Assets\jonBuilt.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <AvaloniaResource Include="Icons\Assets\jonBuilt.ico" />
+    <AvaloniaResource Include="Icons\Assets\jonBuilt.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
     <AvaloniaResource Include="Themes\Cyberpunk\theme.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
     <AvaloniaResource Include="Themes\Dark\theme.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
-    <Content Include="Themes\Forest Green\ControlThemes\Button.axaml">
+    <AvaloniaResource Include="Themes\Forest Green\theme.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Themes\Forest Green\ControlThemes\TextBlock.axaml">
+    </AvaloniaResource>
+    <AvaloniaResource Include="Themes\High Contrast\theme.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Themes\Forest Green\theme.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Themes\High Contrast\ControlThemes\Button.axaml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Themes\High Contrast\ControlThemes\TextBlock.axaml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Themes\High Contrast\theme.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </AvaloniaResource>
     <AvaloniaResource Include="Themes\Light\theme.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
@@ -68,6 +58,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\CaseConverterPro\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.0" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.5" />
@@ -81,6 +78,18 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
     <AvaloniaResource Update="Themes\Dark\ControlThemes\TextBlock.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\Forest Green\ControlThemes\Button.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\Forest Green\ControlThemes\TextBlock.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\High Contrast\ControlThemes\Button.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\High Contrast\ControlThemes\TextBlock.axaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
     <AvaloniaResource Update="Themes\Light\ControlThemes\Button.axaml">
