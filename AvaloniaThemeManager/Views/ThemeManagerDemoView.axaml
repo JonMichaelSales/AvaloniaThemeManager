@@ -1,0 +1,935 @@
+<UserControl
+    x:Class="AvaloniaThemeManager.Views.ThemeManagerDemoView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:AvaloniaThemeManager.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:icons="clr-namespace:AvaloniaThemeManager.Icons"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:AvaloniaThemeManager.ViewModels"
+    MinWidth="1200"
+    MinHeight="700"
+    x:DataType="vm:ThemeSettingsViewModel"
+    Background="{DynamicResource BackgroundBrush}"
+    mc:Ignorable="d">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Header with Theme Switcher  -->
+        <Border
+            Grid.Row="0"
+            Padding="20,15"
+            Background="{DynamicResource BackgroundLightBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="0,0,0,1"
+            Theme="{StaticResource ToolbarContainerBorderTheme}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel
+                    Grid.Column="0"
+                    Orientation="Horizontal"
+                    Spacing="15">
+                    <Path
+                        Width="32"
+                        Height="32"
+                        Data="{x:Static icons:ApplicationIcons.SettingsGeometry}"
+                        Fill="{DynamicResource AccentBlueBrush}"
+                        Stretch="Uniform" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Foreground="{DynamicResource TextPrimaryBrush}"
+                            Text="Avalonia Theme Manager"
+                            Theme="{StaticResource HeaderTextBlockTheme}" />
+                        <TextBlock
+                            FontSize="12"
+                            Foreground="{DynamicResource TextSecondaryBrush}"
+                            Text="Comprehensive Theme System Demo - All Controls, Icons &amp; Features"
+                            Theme="{StaticResource CaptionTextBlockTheme}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <controls:QuickThemeSwitcher Grid.Column="1" Margin="0,0,15,0" />
+
+                <StackPanel
+                    Grid.Column="2"
+                    Orientation="Horizontal"
+                    Spacing="10">
+                    <Button Click="OpenThemeSettings_Click" Theme="{StaticResource ToolbarButtonTheme}">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Path
+                                    Width="16"
+                                    Height="16"
+                                    Data="{x:Static icons:ApplicationIcons.SettingsGeometry}"
+                                    Fill="{DynamicResource TextPrimaryBrush}"
+                                    Stretch="Uniform" />
+                                <TextBlock Text="Settings" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                    <Button
+                        Click="ExportTheme_Click"
+                        Content="Export Theme"
+                        Theme="{StaticResource ToolbarPrimaryButtonTheme}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!--  Main Content Area  -->
+        <ScrollViewer
+            Grid.Row="1"
+            Margin="25"
+            Padding="0,25,0,25"
+            VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+
+                <!--  Typography Showcase  -->
+                <Border Theme="{StaticResource CardBorderTheme}">
+                    <StackPanel Spacing="20">
+                        <TextBlock Text="Typography Hierarchy" Theme="{StaticResource SectionHeaderTheme}" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Spacing="12">
+                                <TextBlock
+                                    FontSize="32"
+                                    FontWeight="Bold"
+                                    Text="Display Large (32px)" />
+                                <TextBlock
+                                    FontSize="24"
+                                    FontWeight="SemiBold"
+                                    Text="Headline Large (24px)" />
+                                <TextBlock
+                                    FontSize="20"
+                                    FontWeight="Medium"
+                                    Text="Title Large (20px)" />
+                                <TextBlock
+                                    FontSize="16"
+                                    FontWeight="Normal"
+                                    Text="Body Large (16px)" />
+                                <TextBlock
+                                    FontSize="14"
+                                    FontWeight="Normal"
+                                    Text="Body Medium (14px)" />
+                                <TextBlock
+                                    FontSize="12"
+                                    FontWeight="Normal"
+                                    Text="Body Small (12px)" />
+                                <TextBlock
+                                    FontSize="11"
+                                    FontWeight="Normal"
+                                    Text="Caption (11px)" />
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Spacing="12">
+                                <TextBlock Text="Themed Text Styles" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                                <TextBlock Text="Header Text Block Theme" Theme="{StaticResource HeaderTextBlockTheme}" />
+                                <TextBlock Text="Section Header Theme" Theme="{StaticResource SectionHeaderTheme}" />
+                                <TextBlock Text="Stats Value Theme" Theme="{StaticResource StatsValueTheme}" />
+                                <TextBlock Text="Label Text Block Theme" Theme="{StaticResource LabelTextBlockTheme}" />
+                                <TextBlock Text="Caption Text Block Theme" Theme="{StaticResource CaptionTextBlockTheme}" />
+                                <TextBlock Text="Status Bar Main Text" Theme="{StaticResource StatusBarMainTextTheme}" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!--  Controls Showcase  -->
+                <Border Theme="{StaticResource CardBorderTheme}">
+                    <StackPanel Spacing="20">
+                        <TextBlock Text="Interactive Controls" Theme="{StaticResource SectionHeaderTheme}" />
+
+                        <TabControl MinHeight="400" Theme="{StaticResource CustomTabControlTheme}">
+                            <!--  Buttons Tab  -->
+                            <TabItem Header="Buttons">
+                                <ScrollViewer Padding="20">
+                                    <StackPanel Spacing="20">
+                                        <TextBlock Text="Button Themes" Theme="{StaticResource SubheaderTextBlockTheme}" />
+
+                                        <WrapPanel>
+                                            <Button Content="Primary Button" Theme="{StaticResource PrimaryButtonTheme}" />
+                                            <Button Content="Secondary Button" Theme="{StaticResource SecondaryButtonTheme}" />
+                                            <Button Content="Browse Button" Theme="{StaticResource BrowseButtonTheme}" />
+                                            <Button Content="Toolbar Button" Theme="{StaticResource ToolbarButtonTheme}" />
+                                            <Button Content="Toolbar Primary" Theme="{StaticResource ToolbarPrimaryButtonTheme}" />
+                                            <Button Classes="accent" Content="Accent Button" />
+                                            <Button Content="Disabled Button" IsEnabled="False" />
+                                        </WrapPanel>
+
+                                        <TextBlock Text="Buttons with Icons" Theme="{StaticResource SubheaderTextBlockTheme}" />
+
+                                        <WrapPanel>
+                                            <Button Theme="{StaticResource PrimaryButtonTheme}">
+                                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                                    <Path
+                                                        Width="16"
+                                                        Height="16"
+                                                        Data="{x:Static icons:ApplicationIcons.SearchGeometry}"
+                                                        Fill="{DynamicResource TextPrimaryBrush}"
+                                                        Stretch="Uniform" />
+                                                    <TextBlock Text="Search" />
+                                                </StackPanel>
+                                            </Button>
+                                            <Button Theme="{StaticResource SecondaryButtonTheme}">
+                                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                                    <Path
+                                                        Width="16"
+                                                        Height="16"
+                                                        Data="{x:Static icons:ApplicationIcons.RefreshGeometry}"
+                                                        Fill="{DynamicResource TextPrimaryBrush}"
+                                                        Stretch="Uniform" />
+                                                    <TextBlock Text="Refresh" />
+                                                </StackPanel>
+                                            </Button>
+                                            <Button Theme="{StaticResource BrowseButtonTheme}">
+                                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                                    <Path
+                                                        Width="16"
+                                                        Height="16"
+                                                        Data="{x:Static icons:ApplicationIcons.BrowseGeometry}"
+                                                        Fill="{DynamicResource TextPrimaryBrush}"
+                                                        Stretch="Uniform" />
+                                                    <TextBlock Text="Browse" />
+                                                </StackPanel>
+                                            </Button>
+                                        </WrapPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </TabItem>
+
+                            <!--  Input Controls Tab  -->
+                            <TabItem Header="Input Controls">
+                                <ScrollViewer Padding="20">
+                                    <StackPanel Spacing="25">
+                                        <!--  TextBoxes  -->
+                                        <StackPanel Spacing="15">
+                                            <TextBlock Text="Text Input Controls" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel
+                                                    Grid.Column="0"
+                                                    Margin="0,0,10,0"
+                                                    Spacing="10">
+                                                    <TextBlock Text="Dialog TextBox Theme:" Theme="{StaticResource LabelTextBlockTheme}" />
+                                                    <TextBox
+                                                        Text="Sample text input"
+                                                        Theme="{StaticResource DialogTextBoxTheme}"
+                                                        Watermark="Enter text here..." />
+                                                    <TextBox Theme="{StaticResource DialogTextBoxTheme}" Watermark="Placeholder example" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" Spacing="10">
+                                                    <TextBlock Text="Custom TextBox Theme:" Theme="{StaticResource LabelTextBlockTheme}" />
+                                                    <TextBox
+                                                        Text="Custom styled input"
+                                                        Theme="{StaticResource CustomTextBoxTheme}"
+                                                        Watermark="Custom style..." />
+                                                    <TextBox
+                                                        IsEnabled="False"
+                                                        Text="Disabled input"
+                                                        Theme="{StaticResource CustomTextBoxTheme}" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </StackPanel>
+
+                                        <!--  CheckBoxes  -->
+                                        <StackPanel Spacing="15">
+                                            <TextBlock Text="Selection Controls" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                                            <WrapPanel>
+                                                <StackPanel Spacing="8">
+                                                    <CheckBox Content="Unchecked option" Theme="{StaticResource CustomCheckBoxTheme}" />
+                                                    <CheckBox
+                                                        Content="Checked option"
+                                                        IsChecked="True"
+                                                        Theme="{StaticResource CustomCheckBoxTheme}" />
+                                                    <CheckBox
+                                                        Content="Indeterminate option"
+                                                        IsChecked="{x:Null}"
+                                                        IsThreeState="True"
+                                                        Theme="{StaticResource CustomCheckBoxTheme}" />
+                                                    <CheckBox
+                                                        Content="Disabled option"
+                                                        IsEnabled="False"
+                                                        Theme="{StaticResource CustomCheckBoxTheme}" />
+                                                </StackPanel>
+                                            </WrapPanel>
+                                        </StackPanel>
+
+                                        <!--  ComboBoxes  -->
+                                        <StackPanel Spacing="15">
+                                            <TextBlock Text="Dropdown Controls" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel
+                                                    Grid.Column="0"
+                                                    Margin="0,0,10,0"
+                                                    Spacing="10">
+                                                    <TextBlock Text="Sample ComboBox:" Theme="{StaticResource LabelTextBlockTheme}" />
+                                                    <ComboBox PlaceholderText="Select an option...">
+                                                        <ComboBoxItem>Option 1</ComboBoxItem>
+                                                        <ComboBoxItem>Option 2</ComboBoxItem>
+                                                        <ComboBoxItem>Option 3</ComboBoxItem>
+                                                        <ComboBoxItem>Very Long Option Name Example</ComboBoxItem>
+                                                    </ComboBox>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" Spacing="10">
+                                                    <TextBlock Text="With Selected Item:" Theme="{StaticResource LabelTextBlockTheme}" />
+                                                    <ComboBox SelectedIndex="1">
+                                                        <ComboBoxItem>First Choice</ComboBoxItem>
+                                                        <ComboBoxItem>Selected Choice</ComboBoxItem>
+                                                        <ComboBoxItem>Third Choice</ComboBoxItem>
+                                                    </ComboBox>
+                                                </StackPanel>
+                                            </Grid>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </TabItem>
+
+                            <!--  Layout & Containers Tab  -->
+                            <TabItem Header="Layout Containers">
+                                <ScrollViewer Padding="20">
+                                    <StackPanel Spacing="25">
+                                        <!--  Borders and Containers  -->
+                                        <StackPanel Spacing="15">
+                                            <TextBlock Text="Border Themes" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <Border
+                                                    Grid.Column="0"
+                                                    Margin="5"
+                                                    Theme="{StaticResource DefaultBorderTheme}">
+                                                    <StackPanel Spacing="8">
+                                                        <TextBlock Text="Default Border" Theme="{StaticResource LabelTextBlockTheme}" />
+                                                        <TextBlock Text="Standard container with padding and rounded corners." Theme="{StaticResource CaptionTextBlockTheme}" />
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <Border
+                                                    Grid.Column="1"
+                                                    Margin="5"
+                                                    Theme="{StaticResource CardBorderTheme}">
+                                                    <StackPanel Spacing="8">
+                                                        <TextBlock Text="Card Border" Theme="{StaticResource LabelTextBlockTheme}" />
+                                                        <TextBlock Text="Card-style container with subtle shadow effect." Theme="{StaticResource CaptionTextBlockTheme}" />
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <Border
+                                                    Grid.Column="2"
+                                                    Margin="5"
+                                                    Theme="{StaticResource StatusBarBorderTheme}">
+                                                    <StackPanel Spacing="8">
+                                                        <TextBlock Text="Status Bar Border" Theme="{StaticResource LabelTextBlockTheme}" />
+                                                        <TextBlock Text="Minimal border for status areas." Theme="{StaticResource CaptionTextBlockTheme}" />
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+                                        </StackPanel>
+
+                                        <!--  Expander  -->
+                                        <StackPanel Spacing="15">
+                                            <TextBlock Text="Expandable Content" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <Expander
+                                                    Grid.Column="0"
+                                                    Margin="5"
+                                                    Header="Theme Configuration"
+                                                    Theme="{StaticResource ResumeForgeExpanderTheme}">
+                                                    <StackPanel Spacing="10">
+                                                        <TextBlock Text="Expanded content area with theme settings and options." />
+                                                        <Button Content="Sample Action" Theme="{StaticResource SecondaryButtonTheme}" />
+                                                        <CheckBox Content="Enable advanced features" />
+                                                    </StackPanel>
+                                                </Expander>
+
+                                                <Expander
+                                                    Grid.Column="1"
+                                                    Margin="5"
+                                                    ExpandDirection="Up"
+                                                    Header="Advanced Options"
+                                                    IsExpanded="True"
+                                                    Theme="{StaticResource ResumeForgeExpanderTheme}">
+                                                    <StackPanel Spacing="10">
+                                                        <TextBlock Text="This expander opens upward and is initially expanded." />
+                                                        <Separator />
+                                                        <TextBlock Text="Additional configuration options would go here." />
+                                                    </StackPanel>
+                                                </Expander>
+                                            </Grid>
+                                        </StackPanel>
+
+                                        <!--  Separators  -->
+                                        <StackPanel Spacing="15">
+                                            <TextBlock Text="Separators" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                                            <TextBlock Text="Content above separator" />
+                                            <Separator Theme="{StaticResource HorizontalSeparatorTheme}" />
+                                            <TextBlock Text="Content below separator" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </TabItem>
+
+                            <!--  Icons & Status Tab  -->
+                            <TabItem Header="Icons Status">
+                                <ScrollViewer Padding="20">
+                                    <StackPanel Spacing="25">
+                                        <!--  Application Icons  -->
+                                        <StackPanel Spacing="15">
+                                            <TextBlock Text="Application Icons" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel Grid.Column="0" Spacing="15">
+                                                    <TextBlock Text="System Icons" Theme="{StaticResource LabelTextBlockTheme}" />
+                                                    <StackPanel Spacing="8">
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.FileGeometry}"
+                                                                Fill="{DynamicResource AccentBlueBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="File" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.FolderGeometry}"
+                                                                Fill="{DynamicResource AccentBlueBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="Folder" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.SearchGeometry}"
+                                                                Fill="{DynamicResource AccentBlueBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="Search" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.SettingsGeometry}"
+                                                                Fill="{DynamicResource AccentBlueBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="Settings" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="1" Spacing="15">
+                                                    <TextBlock Text="Status Icons" Theme="{StaticResource LabelTextBlockTheme}" />
+                                                    <StackPanel Spacing="8">
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.InformationGeometry}"
+                                                                Fill="{DynamicResource AccentBlueBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="Information" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.WarningGeometry}"
+                                                                Fill="{DynamicResource WarningBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="Warning" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.ErrorGeometry}"
+                                                                Fill="{DynamicResource ErrorBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="Error" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.SuccessGeometry}"
+                                                                Fill="{DynamicResource SuccessBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="Success" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="2" Spacing="15">
+                                                    <TextBlock Text="Media Icons" Theme="{StaticResource LabelTextBlockTheme}" />
+                                                    <StackPanel Spacing="8">
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.Image}"
+                                                                Fill="{DynamicResource AccentBlueBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="Image" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.Video}"
+                                                                Fill="{DynamicResource AccentBlueBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="Video" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.Audio}"
+                                                                Fill="{DynamicResource AccentBlueBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="Audio" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.Archive}"
+                                                                Fill="{DynamicResource AccentBlueBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="Archive" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="3" Spacing="15">
+                                                    <TextBlock Text="Document Icons" Theme="{StaticResource LabelTextBlockTheme}" />
+                                                    <StackPanel Spacing="8">
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.WordDocument}"
+                                                                Fill="{DynamicResource AccentBlueBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="Word Doc" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.ExcelDocument}"
+                                                                Fill="{DynamicResource AccentBlueBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="Excel Doc" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.PdfDocument}"
+                                                                Fill="{DynamicResource AccentBlueBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="PDF Doc" />
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <Path
+                                                                Width="20"
+                                                                Height="20"
+                                                                Data="{x:Static icons:ApplicationIcons.Code}"
+                                                                Fill="{DynamicResource AccentBlueBrush}"
+                                                                Stretch="Uniform" />
+                                                            <TextBlock VerticalAlignment="Center" Text="Code File" />
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Grid>
+                                        </StackPanel>
+
+                                        <!--  Status Messages  -->
+                                        <StackPanel Spacing="15">
+                                            <TextBlock Text="Status Messages" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                                            <StackPanel Spacing="10">
+                                                <Border
+                                                    Padding="12,8"
+                                                    Background="{DynamicResource BackgroundLightBrush}"
+                                                    BorderBrush="{DynamicResource AccentBlueBrush}"
+                                                    BorderThickness="1,0,0,0"
+                                                    CornerRadius="2">
+                                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                                        <Path
+                                                            Width="16"
+                                                            Height="16"
+                                                            Data="{x:Static icons:ApplicationIcons.InformationGeometry}"
+                                                            Fill="{DynamicResource AccentBlueBrush}"
+                                                            Stretch="Uniform" />
+                                                        <TextBlock VerticalAlignment="Center" Text="Information: Theme loaded successfully." />
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <Border
+                                                    Padding="12,8"
+                                                    Background="{DynamicResource BackgroundLightBrush}"
+                                                    BorderBrush="{DynamicResource WarningBrush}"
+                                                    BorderThickness="1,0,0,0"
+                                                    CornerRadius="2">
+                                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                                        <Path
+                                                            Width="16"
+                                                            Height="16"
+                                                            Data="{x:Static icons:ApplicationIcons.WarningGeometry}"
+                                                            Fill="{DynamicResource WarningBrush}"
+                                                            Stretch="Uniform" />
+                                                        <TextBlock VerticalAlignment="Center" Text="Warning: Theme validation found minor issues." />
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <Border
+                                                    Padding="12,8"
+                                                    Background="{DynamicResource BackgroundLightBrush}"
+                                                    BorderBrush="{DynamicResource ErrorBrush}"
+                                                    BorderThickness="1,0,0,0"
+                                                    CornerRadius="2">
+                                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                                        <Path
+                                                            Width="16"
+                                                            Height="16"
+                                                            Data="{x:Static icons:ApplicationIcons.ErrorGeometry}"
+                                                            Fill="{DynamicResource ErrorBrush}"
+                                                            Stretch="Uniform" />
+                                                        <TextBlock VerticalAlignment="Center" Text="Error: Failed to import theme file." />
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <Border
+                                                    Padding="12,8"
+                                                    Background="{DynamicResource BackgroundLightBrush}"
+                                                    BorderBrush="{DynamicResource SuccessBrush}"
+                                                    BorderThickness="1,0,0,0"
+                                                    CornerRadius="2">
+                                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                                        <Path
+                                                            Width="16"
+                                                            Height="16"
+                                                            Data="{x:Static icons:ApplicationIcons.SuccessGeometry}"
+                                                            Fill="{DynamicResource SuccessBrush}"
+                                                            Stretch="Uniform" />
+                                                        <TextBlock VerticalAlignment="Center" Text="Success: Theme exported successfully." />
+                                                    </StackPanel>
+                                                </Border>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </TabItem>
+                        </TabControl>
+                    </StackPanel>
+                </Border>
+
+                <!--  Color Palette Showcase  -->
+                <Border Theme="{StaticResource CardBorderTheme}">
+                    <StackPanel Spacing="20">
+                        <TextBlock Text="Current Theme Color Palette" Theme="{StaticResource SectionHeaderTheme}" />
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <!--  Primary Colors  -->
+                            <StackPanel Grid.Row="0" Spacing="10">
+                                <TextBlock Text="Primary Colors" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                                <WrapPanel>
+                                    <StackPanel Spacing="5">
+                                        <Border
+                                            Width="60"
+                                            Height="60"
+                                            Background="{DynamicResource BackgroundBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="4" />
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            FontSize="10"
+                                            Text="Background" />
+                                    </StackPanel>
+                                    <StackPanel Spacing="5">
+                                        <Border
+                                            Width="60"
+                                            Height="60"
+                                            Background="{DynamicResource BackgroundLightBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="4" />
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            FontSize="10"
+                                            Text="Background Light" />
+                                    </StackPanel>
+                                    <StackPanel Spacing="5">
+                                        <Border
+                                            Width="60"
+                                            Height="60"
+                                            Background="{DynamicResource AccentBlueBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="4" />
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            FontSize="10"
+                                            Text="Accent" />
+                                    </StackPanel>
+                                    <StackPanel Spacing="5">
+                                        <Border
+                                            Width="60"
+                                            Height="60"
+                                            Background="{DynamicResource TextPrimaryBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="4" />
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            FontSize="10"
+                                            Text="Primary Text" />
+                                    </StackPanel>
+                                    <StackPanel Spacing="5">
+                                        <Border
+                                            Width="60"
+                                            Height="60"
+                                            Background="{DynamicResource TextSecondaryBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="4" />
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            FontSize="10"
+                                            Text="Secondary Text" />
+                                    </StackPanel>
+                                    <StackPanel Spacing="5">
+                                        <Border
+                                            Width="60"
+                                            Height="60"
+                                            Background="{DynamicResource BorderBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="4" />
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            FontSize="10"
+                                            Text="Border" />
+                                    </StackPanel>
+                                </WrapPanel>
+                            </StackPanel>
+
+                            <!--  Status Colors  -->
+                            <StackPanel
+                                Grid.Row="1"
+                                Margin="0,20,0,0"
+                                Spacing="10">
+                                <TextBlock Text="Status Colors" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                                <WrapPanel>
+                                    <StackPanel Spacing="5">
+                                        <Border
+                                            Width="60"
+                                            Height="60"
+                                            Background="{DynamicResource ErrorBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="4" />
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            FontSize="10"
+                                            Text="Error" />
+                                    </StackPanel>
+                                    <StackPanel Spacing="5">
+                                        <Border
+                                            Width="60"
+                                            Height="60"
+                                            Background="{DynamicResource WarningBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="4" />
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            FontSize="10"
+                                            Text="Warning" />
+                                    </StackPanel>
+                                    <StackPanel Spacing="5">
+                                        <Border
+                                            Width="60"
+                                            Height="60"
+                                            Background="{DynamicResource SuccessBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="4" />
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            FontSize="10"
+                                            Text="Success" />
+                                    </StackPanel>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!--  Interactive Demo Section  -->
+                <Border Margin="0,0,0,0" Theme="{StaticResource CardBorderTheme}">
+                    <StackPanel>
+                        <TextBlock Text="Interactive Demo" Theme="{StaticResource SectionHeaderTheme}" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Text="Theme Actions" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                                <StackPanel Spacing="10">
+                                    <Button
+                                        Click="OpenThemeSettings_Click"
+                                        Content="Open Theme Settings Dialog"
+                                        Theme="{StaticResource PrimaryButtonTheme}" />
+                                    <Button
+                                        Click="ShowValidationDemo_Click"
+                                        Content="Show Validation Dialog Demo"
+                                        Theme="{StaticResource SecondaryButtonTheme}" />
+                                    <Button
+                                        Click="ShowErrorDemo_Click"
+                                        Content="Show Error Dialog Demo"
+                                        Theme="{StaticResource SecondaryButtonTheme}" />
+                                    <Button
+                                        Click="ShowConfirmationDemo_Click"
+                                        Content="Show Confirmation Dialog Demo"
+                                        Theme="{StaticResource SecondaryButtonTheme}" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Spacing="15">
+                                <TextBlock Text="Quick Info" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                                <Border
+                                    Padding="15"
+                                    Background="{DynamicResource BackgroundLightBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4">
+                                    <StackPanel Spacing="8">
+                                        <TextBlock FontWeight="Medium" Text="Available Features:" />
+                                        <TextBlock
+                                            FontSize="11"
+                                            Text="• 7 Built-in Themes"
+                                            Theme="{StaticResource CaptionTextBlockTheme}" />
+                                        <TextBlock
+                                            FontSize="11"
+                                            Text="• 50+ SVG Icons"
+                                            Theme="{StaticResource CaptionTextBlockTheme}" />
+                                        <TextBlock
+                                            FontSize="11"
+                                            Text="• Comprehensive Control Themes"
+                                            Theme="{StaticResource CaptionTextBlockTheme}" />
+                                        <TextBlock
+                                            FontSize="11"
+                                            Text="• Typography System"
+                                            Theme="{StaticResource CaptionTextBlockTheme}" />
+                                        <TextBlock
+                                            FontSize="11"
+                                            Text="• Theme Import/Export"
+                                            Theme="{StaticResource CaptionTextBlockTheme}" />
+                                        <TextBlock
+                                            FontSize="11"
+                                            Text="• WCAG Accessibility Validation"
+                                            Theme="{StaticResource CaptionTextBlockTheme}" />
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!--  Status Bar  -->
+        <Border
+            Grid.Row="2"
+            Margin="0,0"
+            Theme="{StaticResource StatusBarBorderTheme}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel
+                    Grid.Column="0"
+                    Orientation="Horizontal"
+                    Spacing="15">
+                    <TextBlock Text="Ready - All theme components loaded successfully" Theme="{StaticResource StatusBarMainTextTheme}" />
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Path
+                            Width="12"
+                            Height="12"
+                            Data="{x:Static icons:ApplicationIcons.SuccessGeometry}"
+                            Fill="{DynamicResource SuccessBrush}"
+                            Stretch="Uniform" />
+                        <TextBlock Text="Theme validation passed" Theme="{StaticResource StatusBarMainTextTheme}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Column="1"
+                    Orientation="Horizontal"
+                    Spacing="10">
+                    <TextBlock Text="Version 1.0" Theme="{StaticResource StatusBarMainTextTheme}" />
+                    <Separator
+                        Width="1"
+                        Height="16"
+                        Background="{DynamicResource BorderBrush}" />
+                    <TextBlock Text="Avalonia 11.3.0" Theme="{StaticResource StatusBarMainTextTheme}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

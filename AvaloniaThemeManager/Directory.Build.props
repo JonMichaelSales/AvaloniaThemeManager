@@ -1,0 +1,98 @@
+<Project>
+
+  <PropertyGroup>
+    <!-- Package Metadata -->
+    <PackageId>AvaloniaThemeManager</PackageId>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Authors>Jon Smith</Authors>
+    <Company>Jon Smith</Company>
+    <Product>AvaloniaThemeManager</Product>
+    <Description>A comprehensive theme management library for Avalonia UI applications with 7+ built-in themes, dynamic theme switching, and extensive control styling.</Description>
+    <PackageDescription>AvaloniaThemeManager provides a complete theming solution for Avalonia UI applications. Features include multiple built-in themes (Dark, Light, Ocean Blue, Forest Green, Purple Haze, High Contrast, Cyberpunk), dynamic theme switching with persistence, comprehensive control styling, and easy integration via extension methods.</PackageDescription>
+    <Copyright>Copyright © Jon Smith 2025</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+    <!-- Repository Information -->
+    <RepositoryUrl>https://github.com/jonsmith/AvaloniaThemeManager</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/jonsmith/AvaloniaThemeManager</PackageProjectUrl>
+
+    <!-- Package Tags -->
+    <PackageTags>avalonia;ui;theme;theming;dark-mode;light-mode;styling;mvvm;cross-platform</PackageTags>
+    <PackageReleaseNotes>
+      v1.0.0:
+      - Initial release
+      - 7 built-in themes (Dark, Light, Ocean Blue, Forest Green, Purple Haze, High Contrast, Cyberpunk)
+      - Dynamic theme switching with persistence
+      - Comprehensive control styling (Button, TextBox, ComboBox, CheckBox, TabControl, etc.)
+      - Quick theme switcher control
+      - Theme settings dialog
+      - Easy integration via AppBuilder extensions
+      - MVVM-friendly architecture
+    </PackageReleaseNotes>
+
+    <!-- Build Configuration -->
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <!-- Icon and README -->
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <!-- Avalonia Compatibility -->
+    <AvaloniaVersion>11.3.0</AvaloniaVersion>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <!-- Package Dependencies -->
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.0" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <!-- Include Package Files -->
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" Condition="Exists('icon.png')" />
+    <None Include="LICENSE" Pack="true" PackagePath="\" Condition="Exists('LICENSE')" />
+  </ItemGroup>
+
+  <!-- Include XAML Theme Files -->
+  <ItemGroup>
+    <AvaloniaResource Include="Themes\**\*.axaml" />
+    <EmbeddedResource Include="Themes\**\*.axaml" />
+  </ItemGroup>
+
+  <!-- Code Analysis -->
+  <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
+</Project>

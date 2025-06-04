@@ -1,0 +1,154 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+  <PackageId>AvaloniaSkinManager</PackageId>
+  <Version>1.0.3</Version>
+  <Authors>Jon Sales</Authors>
+  <Company>Independant</Company>
+  <Product>AvaloniaSkinManager</Product>
+  <Title>Avalonia Theme Manager</Title>
+  <Description>A comprehensive theme management system for Avalonia UI applications with built-in themes, custom theme support, and seamless theme switching capabilities.</Description>
+  <PackageTags>avalonia;theme;theming;ui;dark-mode;light-mode;skin</PackageTags>
+  <PackageProjectUrl>https://github.com/JonMichaelSales/AvaloniaThemeManager</PackageProjectUrl>
+  <RepositoryUrl>https://github.com/JonMichaelSales/AvaloniaThemeManager</RepositoryUrl>
+  <RepositoryType>git</RepositoryType>
+  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  <PackageIcon>icon.png</PackageIcon>
+  <PackageReadmeFile>README.md</PackageReadmeFile>
+  <PackageReleaseNotes>Initial release with comprehensive theme management capabilities.</PackageReleaseNotes>
+  <Copyright>Copyright (c) 2025 Jon Sales</Copyright>
+  <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+  <FileVersion>1.0.0.3</FileVersion>
+  <AssemblyVersion>1.0.0.3</AssemblyVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Icons\Assets\jonBuilt.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Icons\Assets\jonBuilt.ico" />
+    <AvaloniaResource Include="Themes\Cyberpunk\theme.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Themes\Dark\theme.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <Content Include="Themes\Forest Green\ControlThemes\Button.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\Forest Green\ControlThemes\TextBlock.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\Forest Green\theme.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\High Contrast\ControlThemes\Button.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\High Contrast\ControlThemes\TextBlock.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\High Contrast\theme.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <AvaloniaResource Include="Themes\Light\theme.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Themes\ModernIce\theme.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Themes\Ocean Blue\theme.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Themes\Purple Haze\theme.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Themes\RetroTerminal\theme.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Update="Themes\Cyberpunk\ControlThemes\TextBlock.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\Dark\ControlThemes\Button.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\Dark\ControlThemes\TextBlock.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\Light\ControlThemes\Button.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\Light\ControlThemes\TextBlock.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\ModernIce\ControlThemes\Button.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\ModernIce\ControlThemes\CheckBox.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\ModernIce\ControlThemes\ComboBox.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\ModernIce\ControlThemes\Expander.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\ModernIce\ControlThemes\Slider.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\ModernIce\ControlThemes\TabControl.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\ModernIce\ControlThemes\TextBlock.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\ModernIce\ControlThemes\TextBox.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\Ocean Blue\ControlThemes\Button.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\Ocean Blue\ControlThemes\TextBlock.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\Purple Haze\ControlThemes\Button.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\Purple Haze\ControlThemes\TextBlock.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\RetroTerminal\ControlThemes\Button.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\RetroTerminal\ControlThemes\CheckBox.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\RetroTerminal\ControlThemes\ComboBox.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\RetroTerminal\ControlThemes\Expander.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\RetroTerminal\ControlThemes\Slider.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\RetroTerminal\ControlThemes\TabControl.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\RetroTerminal\ControlThemes\TextBlock.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\RetroTerminal\ControlThemes\TextBox.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+  </ItemGroup>
+
+</Project>
