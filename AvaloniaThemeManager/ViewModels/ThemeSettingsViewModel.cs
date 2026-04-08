@@ -1,7 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Reactive;
 using Avalonia.Media;
-using AvaloniaThemeManager.Theme.AvaloniaThemeManager.Theme;
+using AvaloniaThemeManager.Extensions;
+using AvaloniaThemeManager.Theme;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 
@@ -17,6 +18,7 @@ namespace AvaloniaThemeManager.ViewModels
     /// </remarks>
     public class ThemeSettingsViewModel : ViewModelBase
     {
+        private readonly ISkinManager _skinManager;
         private readonly ILogger _logger;
         private ThemeInfo? _selectedTheme;
 
@@ -29,6 +31,7 @@ namespace AvaloniaThemeManager.ViewModels
         /// current theme and available themes.
         /// </remarks>
         public ThemeSettingsViewModel() : this(
+            AppBuilderExtensions.GetRequiredService<ISkinManager>(),
             Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance)
         {
         }
@@ -36,6 +39,7 @@ namespace AvaloniaThemeManager.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ThemeSettingsViewModel"/> class with the specified logger.
         /// </summary>
+        /// <param name="skinManager">The theme manager used to query and apply themes.</param>
         /// <param name="logger">
         /// An instance of <see cref="ILogger"/> used for logging theme-related operations and errors.
         /// </param>
@@ -44,8 +48,9 @@ namespace AvaloniaThemeManager.ViewModels
         /// of theme management operations. It initializes the collection of available themes, sets up
         /// the command for applying themes, and loads the current theme and available themes.
         /// </remarks>
-        public ThemeSettingsViewModel(ILogger logger)
+        public ThemeSettingsViewModel(ISkinManager skinManager, ILogger logger)
         {
+            _skinManager = skinManager ?? throw new ArgumentNullException(nameof(skinManager));
             _logger = logger;
 
             AvailableThemes = new ObservableCollection<ThemeInfo>();
@@ -90,7 +95,7 @@ namespace AvaloniaThemeManager.ViewModels
                     // Apply theme immediately for preview
                     if (value != null)
                     {
-                        SkinManager.Instance.ApplySkin(value.Name);
+                        _skinManager.ApplySkin(value.Name);
                         _logger.LogInformation("Theme changed to: {ThemeName}", value.Name);
                     }
                 }
@@ -101,14 +106,13 @@ namespace AvaloniaThemeManager.ViewModels
         {
             try
             {
-                var skinManager = SkinManager.Instance;
-                var themeNames = skinManager.GetAvailableSkinNames();
+                var themeNames = _skinManager.GetAvailableSkinNames();
 
                 AvailableThemes.Clear();
 
                 foreach (var themeName in themeNames)
                 {
-                    var skin = skinManager.GetSkin(themeName);
+                    var skin = _skinManager.GetSkin(themeName);
                     if (skin != null)
                     {
                         var themeInfo = new ThemeInfo
@@ -133,7 +137,7 @@ namespace AvaloniaThemeManager.ViewModels
         {
             try
             {
-                var currentSkin = SkinManager.Instance.CurrentSkin;
+                var currentSkin = _skinManager.CurrentSkin;
                 if (currentSkin?.Name != null)
                 {
                     SelectedTheme = AvailableThemes.FirstOrDefault(t => t.Name == currentSkin.Name);
@@ -154,7 +158,7 @@ namespace AvaloniaThemeManager.ViewModels
             {
                 if (SelectedTheme != null)
                 {
-                    SkinManager.Instance.ApplySkin(SelectedTheme.Name);
+                    _skinManager.ApplySkin(SelectedTheme.Name);
                     _logger.LogInformation("Applied theme: {ThemeName}", SelectedTheme.Name);
                 }
             }

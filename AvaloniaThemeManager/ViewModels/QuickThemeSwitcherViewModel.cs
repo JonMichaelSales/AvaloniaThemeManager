@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using Avalonia.Media;
-using AvaloniaThemeManager.Theme.AvaloniaThemeManager.Theme;
+using AvaloniaThemeManager.Extensions;
+using AvaloniaThemeManager.Theme;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
 
@@ -11,6 +12,7 @@ namespace AvaloniaThemeManager.ViewModels
     /// </summary>
     public class QuickThemeSwitcherViewModel : ViewModelBase
     {
+        private readonly ISkinManager _skinManager;
         private readonly ILogger _logger;
         private ThemeInfo? _selectedTheme;
 
@@ -19,6 +21,7 @@ namespace AvaloniaThemeManager.ViewModels
         /// with a default logger instance.
         /// </summary>
         public QuickThemeSwitcherViewModel() : this(
+            AppBuilderExtensions.GetRequiredService<ISkinManager>(),
             Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance)
         {
         }
@@ -27,11 +30,13 @@ namespace AvaloniaThemeManager.ViewModels
         /// Initializes a new instance of the <see cref="QuickThemeSwitcherViewModel"/> class
         /// with the specified logger instance.
         /// </summary>
+        /// <param name="skinManager">The theme manager used to query and apply themes.</param>
         /// <param name="logger">
         /// An instance of <see cref="ILogger"/> used for logging operations within the view model.
         /// </param>
-        public QuickThemeSwitcherViewModel(ILogger logger)
+        public QuickThemeSwitcherViewModel(ISkinManager skinManager, ILogger logger)
         {
+            _skinManager = skinManager ?? throw new ArgumentNullException(nameof(skinManager));
             _logger = logger;
             AvailableThemes = new ObservableCollection<ThemeInfo>();
 
@@ -39,7 +44,7 @@ namespace AvaloniaThemeManager.ViewModels
             LoadCurrentTheme();
 
             // Subscribe to skin manager changes to keep in sync
-            SkinManager.Instance.SkinChanged += OnSkinChanged;
+            _skinManager.SkinChanged += OnSkinChanged;
         }
 
         /// <summary>
@@ -76,14 +81,13 @@ namespace AvaloniaThemeManager.ViewModels
         {
             try
             {
-                var skinManager = SkinManager.Instance;
-                var themeNames = skinManager.GetAvailableSkinNames();
+                var themeNames = _skinManager.GetAvailableSkinNames();
 
                 AvailableThemes.Clear();
 
                 foreach (var themeName in themeNames)
                 {
-                    var skin = skinManager.GetSkin(themeName);
+                    var skin = _skinManager.GetSkin(themeName);
                     if (skin != null)
                     {
                         var themeInfo = new ThemeInfo
@@ -108,7 +112,7 @@ namespace AvaloniaThemeManager.ViewModels
         {
             try
             {
-                var currentSkin = SkinManager.Instance.CurrentSkin;
+                var currentSkin = _skinManager.CurrentSkin;
                 if (currentSkin?.Name != null)
                 {
                     var currentTheme = AvailableThemes.FirstOrDefault(t => t.Name == currentSkin.Name);
@@ -132,7 +136,7 @@ namespace AvaloniaThemeManager.ViewModels
             {
                 if (themeInfo != null)
                 {
-                    SkinManager.Instance.ApplySkin(themeInfo.Name);
+                    _skinManager.ApplySkin(themeInfo.Name);
                     _logger.LogInformation("Quick theme switch to: {ThemeName}", themeInfo.Name);
                 }
             }
@@ -181,7 +185,7 @@ namespace AvaloniaThemeManager.ViewModels
         {
             if (disposing)
             {
-                SkinManager.Instance.SkinChanged -= OnSkinChanged;
+                _skinManager.SkinChanged -= OnSkinChanged;
             }
             base.Dispose(disposing);
         }

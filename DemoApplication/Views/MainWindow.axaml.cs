@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using AvaloniaThemeManager.Extensions;
 using AvaloniaThemeManager.Services;
 using AvaloniaThemeManager.Services.Interfaces;
 using AvaloniaThemeManager.Theme;
-using AvaloniaThemeManager.Theme.AvaloniaThemeManager.Theme;
 using AvaloniaThemeManager.ViewModels;
 using AvaloniaThemeManager.Views;
 
@@ -17,6 +17,7 @@ namespace DemoApplication.Views
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly ISkinManager _skinManager;
         private readonly ThemeSettingsViewModel _viewModel;
         private readonly IDialogService _dialogService;
 
@@ -26,9 +27,10 @@ namespace DemoApplication.Views
         public MainWindow()
         {
             InitializeComponent();
+            _skinManager = AppBuilderExtensions.GetRequiredService<ISkinManager>();
 
             // Initialize ViewModel and services
-            _viewModel = new ThemeSettingsViewModel();
+            _viewModel = new ThemeSettingsViewModel(_skinManager, Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance);
             _dialogService = new DialogService(
                 Microsoft.Extensions.Logging.Abstractions.NullLogger<DialogService>.Instance);
 
@@ -38,7 +40,7 @@ namespace DemoApplication.Views
             WireUpEventHandlers();
 
             // Subscribe to theme changes to update status bar
-            SkinManager.Instance.SkinChanged += OnThemeChanged;
+            _skinManager.SkinChanged += OnThemeChanged;
 
             // Initialize status bar
             UpdateCurrentThemeStatus();
@@ -243,7 +245,7 @@ namespace DemoApplication.Views
 
                 if (!string.IsNullOrEmpty(path))
                 {
-                    var currentSkin = SkinManager.Instance.CurrentSkin;
+                    var currentSkin = _skinManager.CurrentSkin;
                     if (currentSkin != null)
                     {
                         var success = await ThemeImportExport.ExportThemeAsync(
@@ -301,8 +303,8 @@ namespace DemoApplication.Views
 
                         if (importResult.Success && importResult.Theme != null)
                         {
-                            SkinManager.Instance.RegisterSkin(importResult.Theme.Name, importResult.Theme);
-                            SkinManager.Instance.ApplySkin(importResult.Theme.Name);
+                            _skinManager.RegisterSkin(importResult.Theme.Name, importResult.Theme);
+                            _skinManager.ApplySkin(importResult.Theme.Name);
 
                             await _dialogService.ShowInfoAsync(
                                 "Import Successful",
@@ -355,11 +357,11 @@ namespace DemoApplication.Views
                 if (!string.IsNullOrEmpty(path))
                 {
                     var allThemes = new Dictionary<string, Skin>();
-                    var themeNames = SkinManager.Instance.GetAvailableSkinNames();
+                    var themeNames = _skinManager.GetAvailableSkinNames();
 
                     foreach (var themeName in themeNames)
                     {
-                        var skin = SkinManager.Instance.GetSkin(themeName);
+                        var skin = _skinManager.GetSkin(themeName);
                         if (skin != null)
                         {
                             allThemes[themeName] = skin;
@@ -396,7 +398,7 @@ namespace DemoApplication.Views
         {
             try
             {
-                var currentSkin = SkinManager.Instance.CurrentSkin;
+                var currentSkin = _skinManager.CurrentSkin;
                 if (currentSkin != null)
                 {
                     var validator = new ThemeValidator();
@@ -427,7 +429,7 @@ namespace DemoApplication.Views
         {
             try
             {
-                var currentSkin = SkinManager.Instance.CurrentSkin;
+                var currentSkin = _skinManager.CurrentSkin;
                 if (currentSkin != null)
                 {
                     var validator = new ThemeValidator();
@@ -474,11 +476,11 @@ namespace DemoApplication.Views
                 "To create a custom theme:\n\n" +
                 "1. Create a new Skin instance\n" +
                 "2. Set colors and properties\n" +
-                "3. Register with SkinManager\n" +
+                "3. Resolve ISkinManager from DI\n" +
                 "4. Apply using ApplySkin()\n\n" +
                 "Example:\n" +
                 "var customSkin = new Skin { Name = \"MyTheme\" };\n" +
-                "SkinManager.Instance.RegisterSkin(\"MyTheme\", customSkin);");
+                "skinManager.RegisterSkin(\"MyTheme\", customSkin);");
         }
 
         private async void InheritanceButton_Click(object? sender, RoutedEventArgs e)
@@ -518,7 +520,7 @@ namespace DemoApplication.Views
             var statusText = this.FindControl<TextBlock>("CurrentThemeStatus");
             if (statusText != null)
             {
-                var currentSkin = SkinManager.Instance.CurrentSkin;
+                var currentSkin = _skinManager.CurrentSkin;
                 statusText.Text = $"Current Theme: {currentSkin?.Name ?? "Unknown"}";
             }
         }
@@ -530,7 +532,7 @@ namespace DemoApplication.Views
         protected override void OnClosed(EventArgs e)
         {
             // Unsubscribe from events to prevent memory leaks
-            SkinManager.Instance.SkinChanged -= OnThemeChanged;
+            _skinManager.SkinChanged -= OnThemeChanged;
 
             // Dispose of ViewModel if it implements IDisposable
             _viewModel?.Dispose();

@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using AvaloniaThemeManager.Extensions;
+using AvaloniaThemeManager.Theme;
 using AvaloniaThemeManager.ViewModels;
 
 namespace AvaloniaThemeManager.Controls;
@@ -18,6 +20,8 @@ public partial class QuickThemeSwitcher : UserControl
     public QuickThemeSwitcher()
     {
         InitializeComponent();
-        DataContext = new QuickThemeSwitcherViewModel();
+        DataContext = new QuickThemeSwitcherViewModel(
+            AppBuilderExtensions.GetRequiredService<ISkinManager>(),
+            Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance);
     }
 }

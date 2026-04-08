@@ -39,7 +39,7 @@ namespace AvaloniaThemeManager.Services
         private readonly string[] _embeddedThemes = new[]
         {
             "Dark", "Light", "Ocean Blue", "Cyberpunk",
-            "RetroTerminal", "Purple Haze", "Forest Green", "High Contrast", "ModernIce"
+            "RetroTerminal", "Purple Haze", "Forest Green", "High Contrast", "ModernIce", "Windows 11 Modern", "Zen Garden","Material Design 3"
         };
 
         /// <summary>

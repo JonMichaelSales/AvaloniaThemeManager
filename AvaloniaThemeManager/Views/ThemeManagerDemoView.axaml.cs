@@ -1,12 +1,11 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using AvaloniaThemeManager.Extensions;
 using AvaloniaThemeManager.Services;
 using AvaloniaThemeManager.Services.Interfaces;
 using AvaloniaThemeManager.Theme;
-using AvaloniaThemeManager.Theme.AvaloniaThemeManager.Theme;
+
 using AvaloniaThemeManager.Utility;
 using AvaloniaThemeManager.ViewModels;
 using Microsoft.Extensions.Logging;
@@ -23,6 +22,7 @@ namespace AvaloniaThemeManager.Views
     /// </remarks>
     public partial class ThemeManagerDemoView : UserControl
     {
+        private readonly ISkinManager _skinManager;
         private readonly ILogger _logger;
         private readonly IDialogService? _errorDialogService;
 
@@ -30,6 +30,7 @@ namespace AvaloniaThemeManager.Views
         /// Initializes a new instance of the ThemeManagerDemoView with default services.
         /// </summary>
         public ThemeManagerDemoView() : this(
+            AppBuilderExtensions.GetRequiredService<ISkinManager>(),
             Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance,
             null)
         {
@@ -40,10 +41,12 @@ namespace AvaloniaThemeManager.Views
         /// <summary>
         /// Initializes a new instance of the ThemeManagerDemoView with dependency injection support.
         /// </summary>
+        /// <param name="skinManager">Theme manager used by the demo view and its child view models.</param>
         /// <param name="logger">Logger instance for tracking demo interactions and errors</param>
         /// <param name="errorDialogService">Service for displaying error dialogs (optional)</param>
-        public ThemeManagerDemoView(ILogger logger, IDialogService? errorDialogService = null)
+        public ThemeManagerDemoView(ISkinManager skinManager, ILogger logger, IDialogService? errorDialogService = null)
         {
+            _skinManager = skinManager ?? throw new ArgumentNullException(nameof(skinManager));
             _logger = logger;
             _errorDialogService = errorDialogService;
 
@@ -59,10 +62,10 @@ namespace AvaloniaThemeManager.Views
             try
             {
                 // Set up the data context with the QuickThemeSwitcher ViewModel
-                DataContext = new QuickThemeSwitcherViewModel(_logger);
+                DataContext = new QuickThemeSwitcherViewModel(_skinManager, _logger);
 
                 // Subscribe to theme changes for logging
-                SkinManager.Instance.SkinChanged += OnThemeChanged;
+                _skinManager.SkinChanged += OnThemeChanged;
 
                 _logger.LogInformation("ThemeManagerDemoView initialized successfully");
             }
@@ -80,7 +83,7 @@ namespace AvaloniaThemeManager.Views
         {
             try
             {
-                var currentTheme = SkinManager.Instance.CurrentSkin?.Name ?? "Unknown";
+                var currentTheme = _skinManager.CurrentSkin?.Name ?? "Unknown";
                 _logger.LogInformation("Theme changed to: {ThemeName}", currentTheme);
                                 
             }
@@ -125,7 +128,7 @@ namespace AvaloniaThemeManager.Views
             {
                 _logger.LogDebug("Starting theme export demo");
 
-                var currentSkin = SkinManager.Instance.CurrentSkin;
+                var currentSkin = _skinManager.CurrentSkin;
                 if (currentSkin == null)
                 {
                     ShowWarningMessage("Export Warning", "No theme is currently active to export.");
@@ -235,13 +238,13 @@ namespace AvaloniaThemeManager.Views
                     if (importResult.Success && importResult.Theme != null)
                     {
                         // Register the imported theme
-                        SkinManager.Instance.RegisterSkin(importResult.Theme.Name, importResult.Theme);
+                        _skinManager.RegisterSkin(importResult.Theme.Name, importResult.Theme);
 
                         _logger.LogInformation("Theme imported successfully from: {FilePath}", filePath);
                         ShowSuccessMessage("Import Successful", $"Theme '{importResult.Theme.Name}' has been imported successfully.");
 
                         // Optionally apply the imported theme
-                        SkinManager.Instance.ApplySkin(importResult.Theme.Name);
+                        _skinManager.ApplySkin(importResult.Theme.Name);
                     }
                     else
                     {

@@ -4,10 +4,8 @@ using System.Diagnostics;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Timers;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
-using AvaloniaThemeManager.Theme.AvaloniaThemeManager.Theme;
+using AvaloniaThemeManager.Extensions;
+using AvaloniaThemeManager.Theme;
 using AvaloniaThemeManager.ViewModels;
 using AvaloniaThemeManager.Utility;
 using ReactiveUI;
@@ -16,6 +14,7 @@ namespace DemoApplication.ViewModels
 {
     public class MainWindowViewModel : AvaloniaThemeManager.ViewModels.ViewModelBase
     {
+        private readonly ISkinManager _skinManager;
         private readonly Timer _progressTimer;
         private string _currentThemeName = "Dark";
         private string _sampleText = "This is sample text for demonstration";
@@ -26,6 +25,8 @@ namespace DemoApplication.ViewModels
 
         public MainWindowViewModel()
         {
+            _skinManager = AppBuilderExtensions.GetRequiredService<ISkinManager>();
+
             // Initialize sample data
             SampleData = new ObservableCollection<SampleDataItem>
             {
@@ -46,7 +47,7 @@ namespace DemoApplication.ViewModels
             OpenGitHubCommand = ReactiveCommand.Create(OpenGitHub);
 
             // Subscribe to theme changes
-            SkinManager.Instance.SkinChanged += OnThemeChanged;
+            _skinManager.SkinChanged += OnThemeChanged;
             UpdateCurrentThemeName();
 
             // Setup progress animation
@@ -113,13 +114,12 @@ namespace DemoApplication.ViewModels
 
         private void LoadAvailableThemes()
         {
-            var themeManager = SkinManager.Instance;
-            var themeNames = themeManager.GetAvailableSkinNames();
+            var themeNames = _skinManager.GetAvailableSkinNames();
 
             AvailableThemes.Clear();
             foreach (var themeName in themeNames)
             {
-                var skin = themeManager.GetSkin(themeName);
+                var skin = _skinManager.GetSkin(themeName);
                 if (skin != null)
                 {
                     AvailableThemes.Add(new ThemeInfo
@@ -155,7 +155,7 @@ namespace DemoApplication.ViewModels
 
         private void UpdateCurrentThemeName()
         {
-            var currentSkin = SkinManager.Instance.CurrentSkin;
+            var currentSkin = _skinManager.CurrentSkin;
             CurrentThemeName = currentSkin?.Name ?? "Unknown";
         }
 

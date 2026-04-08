@@ -69,18 +69,21 @@ public static AppBuilder BuildAvaloniaApp()
 ### 3. Basic Theme Switching
 
 ```csharp
+using AvaloniaThemeManager.Extensions;
 using AvaloniaThemeManager.Theme;
 
+var skinManager = AppBuilderExtensions.GetRequiredService<ISkinManager>();
+
 // Switch to a different theme
-SkinManager.Instance.ApplySkin("Dark");
-SkinManager.Instance.ApplySkin("Ocean Blue");
-SkinManager.Instance.ApplySkin("Cyberpunk");
+skinManager.ApplySkin("Dark");
+skinManager.ApplySkin("Ocean Blue");
+skinManager.ApplySkin("Cyberpunk");
 
 // Get available themes
-var availableThemes = SkinManager.Instance.GetAvailableSkinNames();
+var availableThemes = skinManager.GetAvailableSkinNames();
 
 // Listen for theme changes
-SkinManager.Instance.SkinChanged += (sender, args) =>
+skinManager.SkinChanged += (sender, args) =>
 {
     Console.WriteLine("Theme changed!");
 };
@@ -133,6 +136,8 @@ private async void OpenThemeSettings()
 using AvaloniaThemeManager.Theme;
 using Avalonia.Media;
 
+var skinManager = AppBuilderExtensions.GetRequiredService<ISkinManager>();
+
 // Create a custom theme
 var customTheme = new Skin
 {
@@ -151,8 +156,8 @@ var customTheme = new Skin
 };
 
 // Register and apply the custom theme
-SkinManager.Instance.RegisterSkin("Custom", customTheme);
-SkinManager.Instance.ApplySkin("Custom");
+skinManager.RegisterSkin("Custom", customTheme);
+skinManager.ApplySkin("Custom");
 ```
 
 ### Advanced Configuration
@@ -180,6 +185,8 @@ public static AppBuilder BuildAvaloniaApp()
 
 ```csharp
 using AvaloniaThemeManager.ViewModels;
+using AvaloniaThemeManager.Extensions;
+using AvaloniaThemeManager.Theme;
 
 public class MainWindowViewModel : ViewModelBase
 {
@@ -187,7 +194,10 @@ public class MainWindowViewModel : ViewModelBase
     
     public MainWindowViewModel()
     {
-        ThemeSettings = new ThemeSettingsViewModel();
+        var skinManager = AppBuilderExtensions.GetRequiredService<ISkinManager>();
+        ThemeSettings = new ThemeSettingsViewModel(
+            skinManager,
+            Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance);
     }
 }
 ```

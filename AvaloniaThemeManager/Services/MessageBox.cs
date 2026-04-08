@@ -1,6 +1,5 @@
 ﻿using AvaloniaThemeManager.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using Avalonia;
 using Microsoft.Extensions.Logging;
 
 namespace AvaloniaThemeManager.Services

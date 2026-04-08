@@ -21,7 +21,25 @@
   <AssemblyVersion>1.0.0.4</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
+    <AvaloniaXaml Remove="Themes\Material Design 3\ControlThemes\Button.axaml" />
+    <AvaloniaXaml Remove="Themes\Material Design 3\ControlThemes\TextBox.axaml" />
+    <AvaloniaXaml Remove="Themes\Windows 11 Modern\ControlThemes\Button.axaml" />
+    <AvaloniaXaml Remove="Themes\Windows 11 Modern\ControlThemes\TextBox.axaml" />
+    <AvaloniaXaml Remove="Themes\Zen Garden\ControlThemes\Button.axaml" />
+    <AvaloniaXaml Remove="Themes\Zen Garden\ControlThemes\TextBox.axaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Themes\Material Design 3\ControlThemes\Button.axaml" />
+    <EmbeddedResource Remove="Themes\Material Design 3\ControlThemes\TextBox.axaml" />
+    <EmbeddedResource Remove="Themes\Windows 11 Modern\ControlThemes\Button.axaml" />
+    <EmbeddedResource Remove="Themes\Windows 11 Modern\ControlThemes\TextBox.axaml" />
+    <EmbeddedResource Remove="Themes\Zen Garden\ControlThemes\Button.axaml" />
+    <EmbeddedResource Remove="Themes\Zen Garden\ControlThemes\TextBox.axaml" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Icons\Assets\jonBuilt.ico" />
+    <None Remove="Themes\Windows 11 Modern\theme.json" />
+    <None Remove="Themes\Zen Garden\theme.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +61,9 @@
     <AvaloniaResource Include="Themes\Light\theme.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
+    <AvaloniaResource Include="Themes\Material Design 3\theme.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
     <AvaloniaResource Include="Themes\ModernIce\theme.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
@@ -55,13 +76,12 @@
     <AvaloniaResource Include="Themes\RetroTerminal\theme.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\..\CaseConverterPro\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+    <AvaloniaResource Include="Themes\Windows 11 Modern\theme.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Include="Themes\Zen Garden\theme.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -156,6 +176,18 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
     <AvaloniaResource Update="Themes\RetroTerminal\ControlThemes\TextBox.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\Windows 11 Modern\ControlThemes\Button.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\Windows 11 Modern\ControlThemes\TextBox.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\Zen Garden\ControlThemes\Button.axaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Themes\Zen Garden\ControlThemes\TextBox.axaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
   </ItemGroup>

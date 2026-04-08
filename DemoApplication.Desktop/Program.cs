@@ -2,7 +2,6 @@
 
 using Avalonia;
 using Avalonia.ReactiveUI;
-using Avalonia.Fonts.Inter;
 using AvaloniaThemeManager.Extensions;
 
 namespace DemoApplication.Desktop;

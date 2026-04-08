@@ -2,11 +2,11 @@
     x:Class="DemoApplication.Views.Window1"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:AvaloniaThemeManager.Controls;assembly=AvaloniaThemeManager"
     xmlns:icons="clr-namespace:AvaloniaThemeManager.Icons"
     xmlns:icons1="clr-namespace:AvaloniaThemeManager.Icons;assembly=AvaloniaThemeManager"
     Title="Validation Errors"
     Width="500"
-    Height="450"
     MinWidth="400"
     MinHeight="300"
     Background="{DynamicResource BackgroundBrush}"
@@ -14,4 +14,20 @@
     Icon="avares://AvaloniaThemeManager/Icons/Assets/jonBuilt.ico"
     ShowInTaskbar="False"
     SizeToContent="WidthAndHeight"
-    WindowStartupLocation="CenterOwner" />
+    WindowStartupLocation="CenterOwner">
+    <StackPanel Margin="20" Spacing="10">
+        <controls:QuickThemeSwitcher />
+        <Button Theme="{StaticResource MinimalButtonTheme}">Minimal Button</Button>
+        <Button Theme="{StaticResource NeonButtonTheme}">Neon Button</Button>
+        <Button Theme="{StaticResource ElevatedPrimaryButtonTheme}">Elevated Primary Button</Button>
+        <Button Theme="{StaticResource GradientPrimaryButtonTheme}">Gradient Primary Button</Button>
+        <Button Theme="{StaticResource ModernPrimaryButtonTheme}">Modern Primary Button</Button>
+        <Button Theme="{StaticResource OutlineButtonTheme}">Outline Button</Button>
+        <Button Theme="{StaticResource GhostButtonTheme}">Ghost Button</Button>
+        <Button Theme="{StaticResource SoftButtonTheme}">Soft Button</Button>
+        <Button Theme="{StaticResource SuccessButtonTheme}">Success Button</Button>
+        <Button Theme="{StaticResource WarningButtonTheme}">Warning Button</Button>
+        <Button Theme="{StaticResource DangerButtonTheme}">Danger Button</Button>
+        <Button Theme="{StaticResource GlassButtonTheme}">Glass Button</Button>
+    </StackPanel>
+</Window>

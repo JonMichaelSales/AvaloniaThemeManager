@@ -1,8 +1,7 @@
 ﻿using AvaloniaThemeManager.Services.Interfaces;
 using AvaloniaThemeManager.Services;
-using AvaloniaThemeManager.Theme.AvaloniaThemeManager.Theme;
-using AvaloniaThemeManager.Theme.ValidationRules;
 using AvaloniaThemeManager.Theme;
+using AvaloniaThemeManager.Theme.ValidationRules;
 using AvaloniaThemeManager.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -28,17 +27,22 @@ namespace AvaloniaThemeManager.Extensions
                 builder.SetMinimumLevel(LogLevel.Debug);
             });
 
-            // Core services
-            services.AddSingleton<ISkinManager, SkinManager>();
+            // Application abstraction
+            services.AddSingleton<IApplication, ApplicationWrapper>();
+                
             services.AddSingleton<IThemeLoaderService, ThemeLoaderService>();
-            services.AddSingleton<IDialogService, DialogService>(); // Updated service name
+            services.AddSingleton<SkinManager>();
+            services.AddSingleton<ISkinManager>(serviceProvider => serviceProvider.GetRequiredService<SkinManager>());
+            services.AddSingleton<IDialogService, DialogService>();
 
-            // Validation rules
+            // Theme inheritance manager - will automatically inject ISkinManager
+            services.AddSingleton<ThemeInheritanceManager>();
+
+            // Validation rules (existing)
             services.AddSingleton<IThemeValidationRule, BorderValidationRule>();
             services.AddSingleton<IThemeValidationRule, ColorContrastValidationRule>();
             services.AddSingleton<IThemeValidationRule, NameValidationRule>();
             services.AddSingleton<IThemeValidationRule, AccessibilityValidationRule>();
-            services.AddSingleton<ThemeInheritanceManager>();
 
             // ViewModels
             services.AddTransient<ThemeSettingsViewModel>();

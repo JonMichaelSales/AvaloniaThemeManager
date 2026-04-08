@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AvaloniaThemeManager.Services.Interfaces
+﻿namespace AvaloniaThemeManager.Services.Interfaces
 {
     /// <summary>
     /// Provides methods for displaying various types of dialog messages, such as errors, warnings, informational messages, 

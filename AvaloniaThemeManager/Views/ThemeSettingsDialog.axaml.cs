@@ -1,5 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using AvaloniaThemeManager.Extensions;
+using AvaloniaThemeManager.Theme;
 using AvaloniaThemeManager.ViewModels;
 
 namespace AvaloniaThemeManager.Views;
@@ -22,9 +24,20 @@ public partial class ThemeSettingsDialog : Window
     /// assigning a new instance of <see cref="ThemeSettingsViewModel"/> as its data context.
     /// </remarks>
     public ThemeSettingsDialog()
+        : this(AppBuilderExtensions.GetRequiredService<ISkinManager>())
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ThemeSettingsDialog"/> class with an injected theme manager.
+    /// </summary>
+    /// <param name="skinManager">The theme manager used by the dialog view model.</param>
+    public ThemeSettingsDialog(ISkinManager skinManager)
     {
         InitializeComponent();
-        DataContext = new ThemeSettingsViewModel();
+        DataContext = new ThemeSettingsViewModel(
+            skinManager,
+            Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance);
     }
 
     private void ResetButton_Click(object? sender, RoutedEventArgs e)

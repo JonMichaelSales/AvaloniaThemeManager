@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApplication", "DemoAppl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApplication.Desktop", "DemoApplication.Desktop\DemoApplication.Desktop.csproj", "{2C57DAF4-81F6-C5AA-68C1-5D5728D89EEF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaThemeManager.Tests", "AvaloniaThemeManager.Tests\AvaloniaThemeManager.Tests.csproj", "{242B5032-2D51-4DDC-9929-0F88D82F0B13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{2C57DAF4-81F6-C5AA-68C1-5D5728D89EEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C57DAF4-81F6-C5AA-68C1-5D5728D89EEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C57DAF4-81F6-C5AA-68C1-5D5728D89EEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{242B5032-2D51-4DDC-9929-0F88D82F0B13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{242B5032-2D51-4DDC-9929-0F88D82F0B13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{242B5032-2D51-4DDC-9929-0F88D82F0B13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{242B5032-2D51-4DDC-9929-0F88D82F0B13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
