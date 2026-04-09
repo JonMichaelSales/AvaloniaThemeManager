@@ -334,6 +334,38 @@ namespace AvaloniaThemeManager.Icons
         /// A <see cref="Geometry"/> object representing the "Settings" icon.
         /// </value>
         public static Geometry SettingsGeometry => Geometry.Parse(Settings);
+        /// <summary>
+        /// Gets the geometry data for the "Image" icon.
+        /// </summary>
+        public static Geometry ImageGeometry => Geometry.Parse(Image);
+        /// <summary>
+        /// Gets the geometry data for the "Video" icon.
+        /// </summary>
+        public static Geometry VideoGeometry => Geometry.Parse(Video);
+        /// <summary>
+        /// Gets the geometry data for the "Audio" icon.
+        /// </summary>
+        public static Geometry AudioGeometry => Geometry.Parse(Audio);
+        /// <summary>
+        /// Gets the geometry data for the "Archive" icon.
+        /// </summary>
+        public static Geometry ArchiveGeometry => Geometry.Parse(Archive);
+        /// <summary>
+        /// Gets the geometry data for the "Word Document" icon.
+        /// </summary>
+        public static Geometry WordDocumentGeometry => Geometry.Parse(WordDocument);
+        /// <summary>
+        /// Gets the geometry data for the "Excel Document" icon.
+        /// </summary>
+        public static Geometry ExcelDocumentGeometry => Geometry.Parse(ExcelDocument);
+        /// <summary>
+        /// Gets the geometry data for the "PDF Document" icon.
+        /// </summary>
+        public static Geometry PdfDocumentGeometry => Geometry.Parse(PdfDocument);
+        /// <summary>
+        /// Gets the geometry data for the "Code" icon.
+        /// </summary>
+        public static Geometry CodeGeometry => Geometry.Parse(Code);
         #endregion
 
         /// <summary>

@@ -3,9 +3,9 @@
   <PropertyGroup>
     <!-- Package Metadata -->
     <PackageId>AvaloniaThemeManager</PackageId>
-    <Version>1.0.0</Version>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
     <Authors>Jon Smith</Authors>
     <Company>Jon Smith</Company>
     <Product>AvaloniaThemeManager</Product>
@@ -22,15 +22,11 @@
     <!-- Package Tags -->
     <PackageTags>avalonia;ui;theme;theming;dark-mode;light-mode;styling;mvvm;cross-platform</PackageTags>
     <PackageReleaseNotes>
-      v1.0.0:
-      - Initial release
-      - 7 built-in themes (Dark, Light, Ocean Blue, Forest Green, Purple Haze, High Contrast, Cyberpunk)
-      - Dynamic theme switching with persistence
-      - Comprehensive control styling (Button, TextBox, ComboBox, CheckBox, TabControl, etc.)
-      - Quick theme switcher control
-      - Theme settings dialog
-      - Easy integration via AppBuilder extensions
-      - MVVM-friendly architecture
+      v2.0.0:
+      - Breaking change: SkinManager is now DI-only; singleton access was removed
+      - Startup integration and built-in controls now resolve ISkinManager from the configured service provider
+      - Fixed inheritable skin resolution so typography, font family, ligature, and URI overrides are preserved correctly
+      - Cleaned package metadata and demo/runtime outputs for reliable build and launch behavior
     </PackageReleaseNotes>
 
     <!-- Build Configuration -->

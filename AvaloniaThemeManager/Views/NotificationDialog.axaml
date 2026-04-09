@@ -61,7 +61,7 @@
                     TextWrapping="Wrap" />
 
                 <!--  Additional Content Area  -->
-                <ContentPresenter x:Name="AdditionalContent" Content="{Binding AdditionalContent, RelativeSource={RelativeSource AncestorType=Window}}" />
+                <ContentPresenter x:Name="AdditionalContentPresenter" />
             </StackPanel>
         </ScrollViewer>
 

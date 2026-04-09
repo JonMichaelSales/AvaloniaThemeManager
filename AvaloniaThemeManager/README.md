@@ -273,6 +273,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Changelog
 
+### v2.0.0 (2026-04-09)
+- Breaking change: `SkinManager` is now DI-only and singleton access has been removed
+- Fixed inheritable theme resolution for typography, font family, ligature, and URI overrides
+- Hardened startup initialization, demo runtime outputs, and package metadata
+
 ### v1.0.0 (2025-01-XX)
 - Initial release
 - 7 built-in themes

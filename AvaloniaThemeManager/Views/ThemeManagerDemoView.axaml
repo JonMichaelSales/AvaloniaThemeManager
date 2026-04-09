@@ -23,7 +23,7 @@
         <!--  Header with Theme Switcher  -->
         <Border
             Grid.Row="0"
-            Padding="20,15"
+            Padding="20,5"
             Background="{DynamicResource BackgroundLightBrush}"
             BorderBrush="{DynamicResource BorderBrush}"
             BorderThickness="0,0,0,1"
@@ -91,7 +91,7 @@
         <ScrollViewer
             Grid.Row="1"
             Margin="25"
-            Padding="0,25,0,25"
+            Padding="0,25,0,0"
             VerticalScrollBarVisibility="Auto">
             <StackPanel>
 
@@ -519,7 +519,7 @@
                                                         <Path
                                                             Width="20"
                                                             Height="20"
-                                                            Data="{x:Static icons:ApplicationIcons.Image}"
+                                                            Data="{x:Static icons:ApplicationIcons.ImageGeometry}"
                                                             Fill="{DynamicResource AccentBlueBrush}"
                                                             Stretch="Uniform" />
                                                         <TextBlock VerticalAlignment="Center" Text="Image" />
@@ -528,7 +528,7 @@
                                                         <Path
                                                             Width="20"
                                                             Height="20"
-                                                            Data="{x:Static icons:ApplicationIcons.Video}"
+                                                            Data="{x:Static icons:ApplicationIcons.VideoGeometry}"
                                                             Fill="{DynamicResource AccentBlueBrush}"
                                                             Stretch="Uniform" />
                                                         <TextBlock VerticalAlignment="Center" Text="Video" />
@@ -537,7 +537,7 @@
                                                         <Path
                                                             Width="20"
                                                             Height="20"
-                                                            Data="{x:Static icons:ApplicationIcons.Audio}"
+                                                            Data="{x:Static icons:ApplicationIcons.AudioGeometry}"
                                                             Fill="{DynamicResource AccentBlueBrush}"
                                                             Stretch="Uniform" />
                                                         <TextBlock VerticalAlignment="Center" Text="Audio" />
@@ -546,7 +546,7 @@
                                                         <Path
                                                             Width="20"
                                                             Height="20"
-                                                            Data="{x:Static icons:ApplicationIcons.Archive}"
+                                                            Data="{x:Static icons:ApplicationIcons.ArchiveGeometry}"
                                                             Fill="{DynamicResource AccentBlueBrush}"
                                                             Stretch="Uniform" />
                                                         <TextBlock VerticalAlignment="Center" Text="Archive" />
@@ -561,7 +561,7 @@
                                                         <Path
                                                             Width="20"
                                                             Height="20"
-                                                            Data="{x:Static icons:ApplicationIcons.WordDocument}"
+                                                            Data="{x:Static icons:ApplicationIcons.WordDocumentGeometry}"
                                                             Fill="{DynamicResource AccentBlueBrush}"
                                                             Stretch="Uniform" />
                                                         <TextBlock VerticalAlignment="Center" Text="Word Doc" />
@@ -570,7 +570,7 @@
                                                         <Path
                                                             Width="20"
                                                             Height="20"
-                                                            Data="{x:Static icons:ApplicationIcons.ExcelDocument}"
+                                                            Data="{x:Static icons:ApplicationIcons.ExcelDocumentGeometry}"
                                                             Fill="{DynamicResource AccentBlueBrush}"
                                                             Stretch="Uniform" />
                                                         <TextBlock VerticalAlignment="Center" Text="Excel Doc" />
@@ -579,7 +579,7 @@
                                                         <Path
                                                             Width="20"
                                                             Height="20"
-                                                            Data="{x:Static icons:ApplicationIcons.PdfDocument}"
+                                                            Data="{x:Static icons:ApplicationIcons.PdfDocumentGeometry}"
                                                             Fill="{DynamicResource AccentBlueBrush}"
                                                             Stretch="Uniform" />
                                                         <TextBlock VerticalAlignment="Center" Text="PDF Doc" />
@@ -588,7 +588,7 @@
                                                         <Path
                                                             Width="20"
                                                             Height="20"
-                                                            Data="{x:Static icons:ApplicationIcons.Code}"
+                                                            Data="{x:Static icons:ApplicationIcons.CodeGeometry}"
                                                             Fill="{DynamicResource AccentBlueBrush}"
                                                             Stretch="Uniform" />
                                                         <TextBlock VerticalAlignment="Center" Text="Code File" />
@@ -934,12 +934,12 @@
                     Grid.Column="1"
                     Orientation="Horizontal"
                     Spacing="10">
-                    <TextBlock Text="Version 1.0" Theme="{StaticResource StatusBarMainTextTheme}" />
+                    <TextBlock x:Name="LibraryVersionText" Theme="{StaticResource StatusBarMainTextTheme}" />
                     <Separator
                         Width="1"
                         Height="16"
                         Background="{DynamicResource BorderBrush}" />
-                    <TextBlock Text="Avalonia 11.3.0" Theme="{StaticResource StatusBarMainTextTheme}" />
+                    <TextBlock x:Name="AvaloniaVersionText" Theme="{StaticResource StatusBarMainTextTheme}" />
                 </StackPanel>
             </Grid>
         </Border>

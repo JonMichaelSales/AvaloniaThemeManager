@@ -9,7 +9,7 @@ namespace AvaloniaThemeManager.Tests
     /// </summary>  
     public class TestApplication : Application, IDisposable
     {
-        private bool _disposed = false;
+        private bool _disposed;
 
         public TestApplication()
         {

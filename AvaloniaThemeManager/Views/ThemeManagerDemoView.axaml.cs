@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using System.Reflection;
 using AvaloniaThemeManager.Extensions;
 using AvaloniaThemeManager.Services;
 using AvaloniaThemeManager.Services.Interfaces;
@@ -63,6 +64,7 @@ namespace AvaloniaThemeManager.Views
             {
                 // Set up the data context with the QuickThemeSwitcher ViewModel
                 DataContext = new QuickThemeSwitcherViewModel(_skinManager, _logger);
+                InitializeVersionDisplay();
 
                 // Subscribe to theme changes for logging
                 _skinManager.SkinChanged += OnThemeChanged;
@@ -74,6 +76,27 @@ namespace AvaloniaThemeManager.Views
                 _logger.LogError(ex, "Failed to initialize ThemeManagerDemoView");
                 ShowErrorMessage("Initialization Error", "Failed to initialize the demo view", ex);
             }
+        }
+
+        private void InitializeVersionDisplay()
+        {
+            var libraryVersion = typeof(ThemeManagerDemoView).Assembly.GetName().Version;
+            var avaloniaVersion = typeof(Avalonia.Application).Assembly.GetName().Version;
+
+            LibraryVersionText.Text = $"Version {FormatVersion(libraryVersion)}";
+            AvaloniaVersionText.Text = $"Avalonia {FormatVersion(avaloniaVersion)}";
+        }
+
+        private static string FormatVersion(Version? version)
+        {
+            if (version == null)
+            {
+                return "Unknown";
+            }
+
+            return version.Build >= 0
+                ? $"{version.Major}.{version.Minor}.{version.Build}"
+                : $"{version.Major}.{version.Minor}";
         }
 
         /// <summary>

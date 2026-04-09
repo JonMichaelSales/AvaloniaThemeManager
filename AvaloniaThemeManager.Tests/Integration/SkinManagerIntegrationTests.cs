@@ -1,7 +1,7 @@
 ﻿using Avalonia.Media;
 using AvaloniaThemeManager.Services;
 using AvaloniaThemeManager.Theme;
-using global::AvaloniaThemeManager.Services.Interfaces;
+using AvaloniaThemeManager.Services.Interfaces;
 using Moq;
 
 namespace AvaloniaThemeManager.Tests.Integration
