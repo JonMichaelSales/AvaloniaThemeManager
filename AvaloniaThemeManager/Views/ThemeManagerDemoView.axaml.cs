@@ -1,8 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using System.Reflection;
-using AvaloniaThemeManager.Extensions;
 using AvaloniaThemeManager.Services;
 using AvaloniaThemeManager.Services.Interfaces;
 using AvaloniaThemeManager.Theme;
@@ -30,13 +28,12 @@ namespace AvaloniaThemeManager.Views
         /// <summary>
         /// Initializes a new instance of the ThemeManagerDemoView with default services.
         /// </summary>
+        [Obsolete("Use the dependency-injected ThemeManagerDemoView(ISkinManager, ILogger, IDialogService?) constructor instead.")]
         public ThemeManagerDemoView() : this(
-            AppBuilderExtensions.GetRequiredService<ISkinManager>(),
+            AvaloniaThemeManager.Extensions.AppBuilderExtensions.GetRequiredService<ISkinManager>(),
             Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance,
             null)
         {
-
-            
         }
 
         /// <summary>
@@ -62,8 +59,9 @@ namespace AvaloniaThemeManager.Views
         {
             try
             {
-                // Set up the data context with the QuickThemeSwitcher ViewModel
-                DataContext = new QuickThemeSwitcherViewModel(_skinManager, _logger);
+                var quickThemeSwitcherViewModel = new QuickThemeSwitcherViewModel(_skinManager, _logger);
+                DataContext = quickThemeSwitcherViewModel;
+                QuickThemeSwitcherHost.Content = new Controls.QuickThemeSwitcher(quickThemeSwitcherViewModel);
                 InitializeVersionDisplay();
 
                 // Subscribe to theme changes for logging
@@ -128,7 +126,11 @@ namespace AvaloniaThemeManager.Views
                 _logger.LogDebug("Opening theme settings dialog");
 
                 var mainWindow = WindowTools.GetMainWindow();
-                if (mainWindow != null) new ThemeSettingsDialog().Show(mainWindow);
+                if (mainWindow != null)
+                {
+                    var dialog = new ThemeSettingsDialog(new ThemeSettingsViewModel(_skinManager, _logger));
+                    dialog.Show(mainWindow);
+                }
 
                 _logger.LogInformation("Theme settings dialog closed");
             }

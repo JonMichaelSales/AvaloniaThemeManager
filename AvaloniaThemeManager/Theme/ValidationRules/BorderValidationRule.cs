@@ -5,6 +5,24 @@
     /// </summary>
     public class BorderValidationRule : IThemeValidationRule
     {
+        private readonly IThemeValidationHelper _validationHelper;
+
+        /// <summary>
+        /// Initializes a new rule with the default validation helper.
+        /// </summary>
+        public BorderValidationRule()
+            : this(new ThemeValidationHelper())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new rule with the provided validation helper.
+        /// </summary>
+        public BorderValidationRule(IThemeValidationHelper validationHelper)
+        {
+            _validationHelper = validationHelper ?? throw new ArgumentNullException(nameof(validationHelper));
+        }
+
         /// <summary>
         /// Validates border properties including thickness, radius, and color contrast.
         /// </summary>
@@ -76,10 +94,8 @@
 
         private void ValidateBorderColorContrast(Skin theme, ThemeValidationResult result)
         {
-            var validator = new ThemeValidator();
-
             // Check border contrast against primary background
-            var primaryBorderContrast = validator.CalculateContrastRatio(theme.BorderColor, theme.PrimaryBackground);
+            var primaryBorderContrast = _validationHelper.CalculateContrastRatio(theme.BorderColor, theme.PrimaryBackground);
             if (primaryBorderContrast < 1.5)
             {
                 result.AddError($"Border color has insufficient contrast against primary background (ratio: {primaryBorderContrast:F2})");
@@ -90,7 +106,7 @@
             }
 
             // Check border contrast against secondary background
-            var secondaryBorderContrast = validator.CalculateContrastRatio(theme.BorderColor, theme.SecondaryBackground);
+            var secondaryBorderContrast = _validationHelper.CalculateContrastRatio(theme.BorderColor, theme.SecondaryBackground);
             if (secondaryBorderContrast < 1.5)
             {
                 result.AddError($"Border color has insufficient contrast against secondary background (ratio: {secondaryBorderContrast:F2})");
@@ -101,7 +117,7 @@
             }
 
             // Check if border color is too similar to text colors (might cause confusion)
-            var textSimilarity = validator.CalculateContrastRatio(theme.BorderColor, theme.PrimaryTextColor);
+            var textSimilarity = _validationHelper.CalculateContrastRatio(theme.BorderColor, theme.PrimaryTextColor);
             if (textSimilarity < 1.2)
             {
                 result.AddWarning("Border color is very similar to primary text color, which may cause visual confusion");

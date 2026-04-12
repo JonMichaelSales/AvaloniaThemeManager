@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls;
-using Avalonia.Styling;
 
 namespace AvaloniaThemeManager.Services.Interfaces
 {

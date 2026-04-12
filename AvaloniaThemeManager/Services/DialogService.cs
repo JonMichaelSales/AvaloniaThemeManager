@@ -149,6 +149,12 @@ namespace AvaloniaThemeManager.Services
         {
             _logger.LogDebug("Confirmation dialog shown: {Title} - {Message}", title, message);
 
+            if (WindowTools.TryGetMainWindow() is not { } mainWindow)
+            {
+                _logger.LogWarning("Confirmation dialog could not be shown modally because no main window is available: {Title}", title);
+                return false;
+            }
+
             var dialog = new ConfirmationDialog
             {
                 Title = title,
@@ -157,20 +163,11 @@ namespace AvaloniaThemeManager.Services
                 CancelText = cancelText
             };
 
-            bool? result;
-            if (WindowTools.TryGetMainWindow() is { } mainWindow)
-            {
-                result = await dialog.ShowDialog<bool?>(mainWindow);
-            }
-            else
-            {
-                dialog.Show();
-                return true;
-            }
-
-            return result == true;
+            var result = await dialog.ShowDialog<bool?>(mainWindow);
+            return MapConfirmationResult(result);
         }
 
+        internal static bool MapConfirmationResult(bool? result) => result == true;
 
     }
 

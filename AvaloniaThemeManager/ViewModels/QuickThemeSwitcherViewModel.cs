@@ -20,6 +20,7 @@ namespace AvaloniaThemeManager.ViewModels
         /// Initializes a new instance of the <see cref="QuickThemeSwitcherViewModel"/> class
         /// with a default logger instance.
         /// </summary>
+        [Obsolete("Use the dependency-injected QuickThemeSwitcherViewModel(ISkinManager, ILogger) constructor instead.")]
         public QuickThemeSwitcherViewModel() : this(
             AppBuilderExtensions.GetRequiredService<ISkinManager>(),
             Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance)

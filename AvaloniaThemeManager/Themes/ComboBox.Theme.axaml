@@ -95,7 +95,7 @@
                 UseLayoutRounding="False" />
 
             <Popup
-                Name="PART_Popup"
+              Grid.Column="0" Name="PART_Popup"
                 MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}"
                 MaxHeight="{TemplateBinding MaxDropDownHeight}"
                 InheritsTransform="True"

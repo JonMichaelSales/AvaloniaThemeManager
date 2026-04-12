@@ -30,6 +30,7 @@ namespace AvaloniaThemeManager.ViewModels
         /// the collection of available themes, the command for applying themes, and loads the
         /// current theme and available themes.
         /// </remarks>
+        [Obsolete("Use the dependency-injected ThemeSettingsViewModel(ISkinManager, ILogger) constructor instead.")]
         public ThemeSettingsViewModel() : this(
             AppBuilderExtensions.GetRequiredService<ISkinManager>(),
             Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance)

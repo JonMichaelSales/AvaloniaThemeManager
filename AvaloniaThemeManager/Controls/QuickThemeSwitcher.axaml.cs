@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using AvaloniaThemeManager.Extensions;
-using AvaloniaThemeManager.Theme;
 using AvaloniaThemeManager.ViewModels;
 
 namespace AvaloniaThemeManager.Controls;
@@ -17,11 +16,19 @@ public partial class QuickThemeSwitcher : UserControl
     /// This constructor sets up the control by initializing its components and
     /// assigning a new instance of <see cref="QuickThemeSwitcherViewModel"/> as its data context.
     /// </summary>
+    [Obsolete("Use the dependency-injected QuickThemeSwitcher(QuickThemeSwitcherViewModel) constructor instead.")]
     public QuickThemeSwitcher()
+        : this(new QuickThemeSwitcherViewModel())
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QuickThemeSwitcher"/> class with an explicit view model.
+    /// </summary>
+    /// <param name="viewModel">The view model to use as the data context.</param>
+    public QuickThemeSwitcher(QuickThemeSwitcherViewModel viewModel)
     {
         InitializeComponent();
-        DataContext = new QuickThemeSwitcherViewModel(
-            AppBuilderExtensions.GetRequiredService<ISkinManager>(),
-            Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance);
+        DataContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
     }
 }

@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using AvaloniaThemeManager.Services.Interfaces;
 using Avalonia;
-using Avalonia.Styling;
 
 namespace AvaloniaThemeManager.Services
 {

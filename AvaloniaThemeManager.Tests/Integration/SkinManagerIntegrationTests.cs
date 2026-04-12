@@ -58,7 +58,7 @@ namespace AvaloniaThemeManager.Tests.Integration
 
         public void Dispose()
         {
-            _testApp?.Dispose();
+            _testApp.Dispose();
         }
     }
 }

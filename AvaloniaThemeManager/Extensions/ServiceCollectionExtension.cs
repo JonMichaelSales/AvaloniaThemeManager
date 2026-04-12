@@ -31,18 +31,41 @@ namespace AvaloniaThemeManager.Extensions
             services.AddSingleton<IApplication, ApplicationWrapper>();
                 
             services.AddSingleton<IThemeLoaderService, ThemeLoaderService>();
-            services.AddSingleton<SkinManager>();
+            services.AddSingleton<ISkinRegistry, SkinRegistry>();
+            services.AddSingleton<IThemeSelectionStore, AppSettingsThemeSelectionStore>();
+            services.AddSingleton<ISkinResourceApplier>(serviceProvider =>
+                new SkinResourceApplier(serviceProvider.GetRequiredService<IApplication>()));
+            services.AddSingleton<IVisualRefreshService>(serviceProvider =>
+                new VisualRefreshService(serviceProvider.GetRequiredService<IApplication>()));
+            services.AddSingleton<SkinManager>(serviceProvider => new SkinManager(
+                serviceProvider.GetRequiredService<IThemeLoaderService>(),
+                serviceProvider.GetRequiredService<ISkinRegistry>(),
+                serviceProvider.GetRequiredService<IThemeSelectionStore>(),
+                serviceProvider.GetRequiredService<ISkinResourceApplier>(),
+                serviceProvider.GetRequiredService<IVisualRefreshService>()));
             services.AddSingleton<ISkinManager>(serviceProvider => serviceProvider.GetRequiredService<SkinManager>());
             services.AddSingleton<IDialogService, DialogService>();
+            services.AddSingleton<IThemeValidationHelper, ThemeValidationHelper>();
+            services.AddSingleton<IThemeAutoFixer>(serviceProvider =>
+                new ThemeAutoFixer(serviceProvider.GetRequiredService<IThemeValidationHelper>()));
 
             // Theme inheritance manager - will automatically inject ISkinManager
             services.AddSingleton<ThemeInheritanceManager>();
 
             // Validation rules (existing)
-            services.AddSingleton<IThemeValidationRule, BorderValidationRule>();
-            services.AddSingleton<IThemeValidationRule, ColorContrastValidationRule>();
+            services.AddSingleton<IThemeValidationRule>(serviceProvider =>
+                new BorderValidationRule(serviceProvider.GetRequiredService<IThemeValidationHelper>()));
+            services.AddSingleton<IThemeValidationRule>(serviceProvider =>
+                new ColorContrastValidationRule(serviceProvider.GetRequiredService<IThemeValidationHelper>()));
+            services.AddSingleton<IThemeValidationRule, FontSizeValidationRule>();
             services.AddSingleton<IThemeValidationRule, NameValidationRule>();
-            services.AddSingleton<IThemeValidationRule, AccessibilityValidationRule>();
+            services.AddSingleton<IThemeValidationRule>(serviceProvider =>
+                new AccessibilityValidationRule(serviceProvider.GetRequiredService<IThemeValidationHelper>()));
+            services.AddSingleton<ThemeValidator>(serviceProvider => new ThemeValidator(
+                serviceProvider.GetServices<IThemeValidationRule>(),
+                serviceProvider.GetRequiredService<IThemeValidationHelper>(),
+                serviceProvider.GetRequiredService<IThemeAutoFixer>()));
+            services.AddSingleton<IThemeValidator>(serviceProvider => serviceProvider.GetRequiredService<ThemeValidator>());
 
             // ViewModels
             services.AddTransient<ThemeSettingsViewModel>();

@@ -6,8 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:AvaloniaThemeManager.Views;assembly=AvaloniaThemeManager"
     Title="MainView"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+
     mc:Ignorable="d">
-    <views:ThemeManagerDemoView />
+    <ContentControl x:Name="DemoViewHost" />
 </Window>

@@ -122,6 +122,16 @@ namespace AvaloniaThemeManager.Theme
         /// </summary>
         public SerializableThickness BorderThickness { get; set; } = new() { Left = 1, Top = 1, Right = 1, Bottom = 1 };
 
+        /// <summary>
+        /// Gets or sets the control theme resource URIs used by this theme.
+        /// </summary>
+        public Dictionary<string, string> ControlThemeUris { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets the general style resource URIs used by this theme.
+        /// </summary>
+        public Dictionary<string, string> StyleUris { get; set; } = new();
+
         // Advanced typography (optional)
         /// <summary>
         /// 
@@ -151,7 +161,11 @@ namespace AvaloniaThemeManager.Theme
         /// <returns></returns>
         public static Skin ToSkin(this SerializableTheme theme)
         {
-            return new Skin
+            var fontWeight = Enum.TryParse<FontWeight>(theme.FontWeight, true, out var fw)
+                ? fw
+                : FontWeight.Normal;
+
+            var skin = new Skin
             {
                 Name = theme.Name,
                 PrimaryColor = Color.Parse(theme.PrimaryColor),
@@ -169,7 +183,7 @@ namespace AvaloniaThemeManager.Theme
                 FontSizeSmall = theme.FontSizeSmall,
                 FontSizeMedium = theme.FontSizeMedium,
                 FontSizeLarge = theme.FontSizeLarge,
-                FontWeight = Enum.TryParse<FontWeight>(theme.FontWeight, true, out var fw) ? fw : FontWeight.Normal,
+                FontWeight = fontWeight,
                 BorderRadius = theme.BorderRadius,
                 BorderThickness = new Thickness(
                     theme.BorderThickness.Left,
@@ -177,8 +191,41 @@ namespace AvaloniaThemeManager.Theme
                     theme.BorderThickness.Right,
                     theme.BorderThickness.Bottom
                 ),
-                // AdvancedTypography and PropertyOverrides could be used here too if needed
+                ControlThemeUris = new Dictionary<string, string>(theme.ControlThemeUris ?? new Dictionary<string, string>()),
+                StyleUris = new Dictionary<string, string>(theme.StyleUris ?? new Dictionary<string, string>())
             };
+
+            if (theme.AdvancedTypography != null)
+            {
+                var typography = theme.AdvancedTypography;
+                skin.Typography = new TypographyScale
+                {
+                    DisplayLarge = typography.DisplayLarge,
+                    DisplayMedium = typography.DisplayMedium,
+                    DisplaySmall = typography.DisplaySmall,
+                    HeadlineLarge = typography.HeadlineLarge,
+                    HeadlineMedium = typography.HeadlineMedium,
+                    HeadlineSmall = typography.HeadlineSmall,
+                    TitleLarge = typography.TitleLarge,
+                    TitleMedium = typography.TitleMedium,
+                    TitleSmall = typography.TitleSmall,
+                    LabelLarge = typography.LabelLarge,
+                    LabelMedium = typography.LabelMedium,
+                    LabelSmall = typography.LabelSmall,
+                    BodyLarge = typography.BodyLarge,
+                    BodyMedium = typography.BodyMedium,
+                    BodySmall = typography.BodySmall
+                };
+
+                skin.HeaderFontFamily = new FontFamily(typography.HeaderFontFamily);
+                skin.BodyFontFamily = new FontFamily(typography.BodyFontFamily);
+                skin.MonospaceFontFamily = new FontFamily(typography.MonospaceFontFamily);
+                skin.LineHeight = typography.LineHeight;
+                skin.LetterSpacing = typography.LetterSpacing;
+                skin.EnableLigatures = typography.EnableLigatures;
+            }
+
+            return skin;
         }
     }
 

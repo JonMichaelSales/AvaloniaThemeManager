@@ -9,6 +9,7 @@ using AvaloniaThemeManager.Services.Interfaces;
 using AvaloniaThemeManager.Theme;
 using AvaloniaThemeManager.ViewModels;
 using AvaloniaThemeManager.Views;
+using Microsoft.Extensions.Logging;
 
 namespace DemoApplication.Views
 {
@@ -18,21 +19,45 @@ namespace DemoApplication.Views
     public partial class MainWindow : Window
     {
         private readonly ISkinManager _skinManager;
+        private readonly IThemeValidator _themeValidator;
         private readonly ThemeSettingsViewModel _viewModel;
         private readonly IDialogService _dialogService;
 
         /// <summary>
         /// Initializes a new instance of the ThemeManagerDemoView class.
         /// </summary>
+        [Obsolete("Use the dependency-injected MainWindow constructor instead.")]
         public MainWindow()
+            : this(
+                new ThemeManagerDemoView(
+                    AppBuilderExtensions.GetRequiredService<ISkinManager>(),
+                    Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance,
+                    AppBuilderExtensions.GetService<IDialogService>()),
+                AppBuilderExtensions.GetRequiredService<ISkinManager>(),
+                AppBuilderExtensions.GetRequiredService<IThemeValidator>(),
+                AppBuilderExtensions.GetRequiredService<IDialogService>(),
+                Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ThemeManagerDemoView class with explicit dependencies.
+        /// </summary>
+        public MainWindow(
+            ThemeManagerDemoView demoView,
+            ISkinManager skinManager,
+            IThemeValidator themeValidator,
+            IDialogService dialogService,
+            ILogger logger)
         {
             InitializeComponent();
-            _skinManager = AppBuilderExtensions.GetRequiredService<ISkinManager>();
+            DemoViewHost.Content = demoView ?? throw new ArgumentNullException(nameof(demoView));
+            _skinManager = skinManager ?? throw new ArgumentNullException(nameof(skinManager));
+            _themeValidator = themeValidator ?? throw new ArgumentNullException(nameof(themeValidator));
+            _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
 
             // Initialize ViewModel and services
-            _viewModel = new ThemeSettingsViewModel(_skinManager, Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance);
-            _dialogService = new DialogService(
-                Microsoft.Extensions.Logging.Abstractions.NullLogger<DialogService>.Instance);
+            _viewModel = new ThemeSettingsViewModel(_skinManager, logger ?? throw new ArgumentNullException(nameof(logger)));
 
             DataContext = _viewModel;
 
@@ -135,7 +160,7 @@ namespace DemoApplication.Views
 
         private async void ShowThemeSettingsButton_Click(object? sender, RoutedEventArgs e)
         {
-            var dialog = new ThemeSettingsDialog();
+            var dialog = new ThemeSettingsDialog(new ThemeSettingsViewModel(_skinManager, Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance));
             await dialog.ShowDialog(this);
         }
 
@@ -215,7 +240,7 @@ namespace DemoApplication.Views
 
         private async void OpenThemeSettingsButton_Click(object? sender, RoutedEventArgs e)
         {
-            var dialog = new ThemeSettingsDialog();
+            var dialog = new ThemeSettingsDialog(new ThemeSettingsViewModel(_skinManager, Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance));
             await dialog.ShowDialog(this);
         }
         
@@ -401,8 +426,7 @@ namespace DemoApplication.Views
                 var currentSkin = _skinManager.CurrentSkin;
                 if (currentSkin != null)
                 {
-                    var validator = new ThemeValidator();
-                    var validationResult = validator.ValidateTheme(currentSkin);
+                    var validationResult = _themeValidator.ValidateTheme(currentSkin);
 
                     if (validationResult.IsValid)
                     {
@@ -432,9 +456,8 @@ namespace DemoApplication.Views
                 var currentSkin = _skinManager.CurrentSkin;
                 if (currentSkin != null)
                 {
-                    var validator = new ThemeValidator();
-                    var primaryContrast = validator.CalculateContrastRatio(currentSkin.PrimaryTextColor, currentSkin.PrimaryBackground);
-                    var secondaryContrast = validator.CalculateContrastRatio(currentSkin.SecondaryTextColor, currentSkin.SecondaryBackground);
+                    var primaryContrast = _themeValidator.CalculateContrastRatio(currentSkin.PrimaryTextColor, currentSkin.PrimaryBackground);
+                    var secondaryContrast = _themeValidator.CalculateContrastRatio(currentSkin.SecondaryTextColor, currentSkin.SecondaryBackground);
 
                     var message = $"Accessibility Analysis for '{currentSkin.Name}':\n\n" +
                                   $"Primary Text Contrast: {primaryContrast:F2}:1 " +

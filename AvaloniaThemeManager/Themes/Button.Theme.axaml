@@ -14,15 +14,15 @@
                 <Button
                     Margin="5"
                     Content="Elevated Primary"
-                    Theme="{StaticResource ElevatedPrimaryButtonTheme}" />
+                    Theme="{DynamicResource ElevatedPrimaryButtonTheme}" />
                 <Button
                     Margin="5"
                     Content="Gradient Primary"
-                    Theme="{StaticResource GradientPrimaryButtonTheme}" />
+                    Theme="{DynamicResource GradientPrimaryButtonTheme}" />
                 <Button
                     Margin="5"
                     Content="Modern Primary"
-                    Theme="{StaticResource ModernPrimaryButtonTheme}" />
+                    Theme="{DynamicResource ModernPrimaryButtonTheme}" />
             </WrapPanel>
 
             <!--  Secondary Buttons  -->
@@ -34,15 +34,15 @@
                 <Button
                     Margin="5"
                     Content="Outlined"
-                    Theme="{StaticResource OutlineButtonTheme}" />
+                    Theme="{DynamicResource OutlineButtonTheme}" />
                 <Button
                     Margin="5"
                     Content="Ghost"
-                    Theme="{StaticResource GhostButtonTheme}" />
+                    Theme="{DynamicResource GhostButtonTheme}" />
                 <Button
                     Margin="5"
                     Content="Soft"
-                    Theme="{StaticResource SoftButtonTheme}" />
+                    Theme="{DynamicResource SoftButtonTheme}" />
             </WrapPanel>
 
             <!--  Status Buttons  -->
@@ -54,15 +54,15 @@
                 <Button
                     Margin="5"
                     Content="Success"
-                    Theme="{StaticResource SuccessButtonTheme}" />
+                    Theme="{DynamicResource SuccessButtonTheme}" />
                 <Button
                     Margin="5"
                     Content="Warning"
-                    Theme="{StaticResource WarningButtonTheme}" />
+                    Theme="{DynamicResource WarningButtonTheme}" />
                 <Button
                     Margin="5"
                     Content="Danger"
-                    Theme="{StaticResource DangerButtonTheme}" />
+                    Theme="{DynamicResource DangerButtonTheme}" />
             </WrapPanel>
 
             <!--  Specialty Buttons  -->
@@ -74,15 +74,15 @@
                 <Button
                     Margin="5"
                     Content="Glass"
-                    Theme="{StaticResource GlassButtonTheme}" />
+                    Theme="{DynamicResource GlassButtonTheme}" />
                 <Button
                     Margin="5"
                     Content="Neon"
-                    Theme="{StaticResource NeonButtonTheme}" />
+                    Theme="{DynamicResource NeonButtonTheme}" />
                 <Button
                     Margin="5"
                     Content="Minimal"
-                    Theme="{StaticResource MinimalButtonTheme}" />
+                    Theme="{DynamicResource MinimalButtonTheme}" />
             </WrapPanel>
         </StackPanel>
     </Design.PreviewWith>

@@ -88,7 +88,10 @@ namespace AvaloniaThemeManager.Services
                     foreach (var key in controlThemes)
                     {
                         var controlPath = $"{basePath}/ControlThemes/{key}.axaml";
-                        skin.ControlThemeUris[key] = controlPath;
+                        if (AssetLoader.Exists(new Uri(controlPath), null))
+                        {
+                            skin.ControlThemeUris[key] = controlPath;
+                        }
                     }
 
                     skins.Add(skin);

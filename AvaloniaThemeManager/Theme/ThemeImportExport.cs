@@ -1,6 +1,6 @@
 ﻿// Theme/ThemeImportExport.cs
-using Avalonia;
-using Avalonia.Media;
+
+using AvaloniaThemeManager.Extensions;
 using AvaloniaThemeManager.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -12,6 +12,8 @@ namespace AvaloniaThemeManager.Theme
     /// </summary>
     public static class ThemeImportExport
     {
+        internal const string CurrentThemeFormatVersion = "2.0";
+
         private static readonly JsonSerializerOptions _jsonOptions = new()
         {
             WriteIndented = true,
@@ -44,45 +46,7 @@ namespace AvaloniaThemeManager.Theme
         /// </summary>
         public static async Task<bool> ExportAdvancedThemeAsync(Skin theme, string filePath, string? description = null, string? author = null)
         {
-            try
-            {
-                var serializableTheme = ConvertToSerializable(theme, description, author);
-
-                // Add advanced typography
-                serializableTheme.AdvancedTypography = new SerializableTypography
-                {
-                    DisplayLarge = theme.Typography.DisplayLarge,
-                    DisplayMedium = theme.Typography.DisplayMedium,
-                    DisplaySmall = theme.Typography.DisplaySmall,
-                    HeadlineLarge = theme.Typography.HeadlineLarge,
-                    HeadlineMedium = theme.Typography.HeadlineMedium,
-                    HeadlineSmall = theme.Typography.HeadlineSmall,
-                    TitleLarge = theme.Typography.TitleLarge,
-                    TitleMedium = theme.Typography.TitleMedium,
-                    TitleSmall = theme.Typography.TitleSmall,
-                    LabelLarge = theme.Typography.LabelLarge,
-                    LabelMedium = theme.Typography.LabelMedium,
-                    LabelSmall = theme.Typography.LabelSmall,
-                    BodyLarge = theme.Typography.BodyLarge,
-                    BodyMedium = theme.Typography.BodyMedium,
-                    BodySmall = theme.Typography.BodySmall,
-                    HeaderFontFamily = theme.HeaderFontFamily.ToString(),
-                    BodyFontFamily = theme.BodyFontFamily.ToString(),
-                    MonospaceFontFamily = theme.MonospaceFontFamily.ToString(),
-                    LineHeight = theme.LineHeight,
-                    LetterSpacing = theme.LetterSpacing,
-                    EnableLigatures = theme.EnableLigatures
-                };
-
-                var json = JsonSerializer.Serialize(serializableTheme, _jsonOptions);
-                await File.WriteAllTextAsync(filePath, json);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error exporting advanced theme: {ex.Message}");
-                return false;
-            }
+            return await ExportThemeAsync(theme, filePath, description, author);
         }
 
         /// <summary>
@@ -169,42 +133,7 @@ namespace AvaloniaThemeManager.Theme
 
                 if (serializableTheme == null) return null;
 
-                var baseSkin = ConvertFromSerializable(serializableTheme);
-                
-
-                // Apply advanced typography if present
-                if (serializableTheme.AdvancedTypography != null)
-                {
-                    var typography = serializableTheme.AdvancedTypography;
-
-                    baseSkin.Typography = new TypographyScale
-                    {
-                        DisplayLarge = typography.DisplayLarge,
-                        DisplayMedium = typography.DisplayMedium,
-                        DisplaySmall = typography.DisplaySmall,
-                        HeadlineLarge = typography.HeadlineLarge,
-                        HeadlineMedium = typography.HeadlineMedium,
-                        HeadlineSmall = typography.HeadlineSmall,
-                        TitleLarge = typography.TitleLarge,
-                        TitleMedium = typography.TitleMedium,
-                        TitleSmall = typography.TitleSmall,
-                        LabelLarge = typography.LabelLarge,
-                        LabelMedium = typography.LabelMedium,
-                        LabelSmall = typography.LabelSmall,
-                        BodyLarge = typography.BodyLarge,
-                        BodyMedium = typography.BodyMedium,
-                        BodySmall = typography.BodySmall
-                    };
-
-                    baseSkin.HeaderFontFamily = new FontFamily(typography.HeaderFontFamily);
-                    baseSkin.BodyFontFamily = new FontFamily(typography.BodyFontFamily);
-                    baseSkin.MonospaceFontFamily = new FontFamily(typography.MonospaceFontFamily);
-                    baseSkin.LineHeight = typography.LineHeight;
-                    baseSkin.LetterSpacing = typography.LetterSpacing;
-                    baseSkin.EnableLigatures = typography.EnableLigatures;
-                }
-
-                return baseSkin;
+                return ConvertFromSerializable(serializableTheme);
             }
             catch (Exception ex)
             {
@@ -278,7 +207,7 @@ namespace AvaloniaThemeManager.Theme
                 try
                 {
                     var skin = ConvertFromSerializable(serializableTheme);
-                    var validator = new ThemeValidator();
+                    var validator = AppBuilderExtensions.GetService<IThemeValidator>() ?? new ThemeValidator();
                     var validationResult = validator.ValidateTheme(skin);
 
                     result.Errors.AddRange(validationResult.Errors);
@@ -309,7 +238,7 @@ namespace AvaloniaThemeManager.Theme
                 {
                     Name = packName,
                     Description = description,
-                    Version = "1.0",
+                    Version = CurrentThemeFormatVersion,
                     CreatedDate = DateTime.Now,
                     Themes = themes.Select(kvp => ConvertToSerializable(kvp.Value, null, null)).ToArray()
                 };
@@ -331,6 +260,7 @@ namespace AvaloniaThemeManager.Theme
             {
                 Name = theme.Name ?? "Unnamed Theme",
                 Description = description ?? "",
+                Version = CurrentThemeFormatVersion,
                 Author = author ?? "",
                 PrimaryColor = theme.PrimaryColor.ToString(),
                 SecondaryColor = theme.SecondaryColor.ToString(),
@@ -355,43 +285,39 @@ namespace AvaloniaThemeManager.Theme
                     Top = theme.BorderThickness.Top,
                     Right = theme.BorderThickness.Right,
                     Bottom = theme.BorderThickness.Bottom
+                },
+                ControlThemeUris = new Dictionary<string, string>(theme.ControlThemeUris),
+                StyleUris = new Dictionary<string, string>(theme.StyleUris),
+                AdvancedTypography = new SerializableTypography
+                {
+                    DisplayLarge = theme.Typography.DisplayLarge,
+                    DisplayMedium = theme.Typography.DisplayMedium,
+                    DisplaySmall = theme.Typography.DisplaySmall,
+                    HeadlineLarge = theme.Typography.HeadlineLarge,
+                    HeadlineMedium = theme.Typography.HeadlineMedium,
+                    HeadlineSmall = theme.Typography.HeadlineSmall,
+                    TitleLarge = theme.Typography.TitleLarge,
+                    TitleMedium = theme.Typography.TitleMedium,
+                    TitleSmall = theme.Typography.TitleSmall,
+                    LabelLarge = theme.Typography.LabelLarge,
+                    LabelMedium = theme.Typography.LabelMedium,
+                    LabelSmall = theme.Typography.LabelSmall,
+                    BodyLarge = theme.Typography.BodyLarge,
+                    BodyMedium = theme.Typography.BodyMedium,
+                    BodySmall = theme.Typography.BodySmall,
+                    HeaderFontFamily = theme.HeaderFontFamily.ToString(),
+                    BodyFontFamily = theme.BodyFontFamily.ToString(),
+                    MonospaceFontFamily = theme.MonospaceFontFamily.ToString(),
+                    LineHeight = theme.LineHeight,
+                    LetterSpacing = theme.LetterSpacing,
+                    EnableLigatures = theme.EnableLigatures
                 }
             };
         }
 
         private static Skin ConvertFromSerializable(SerializableTheme serializableTheme)
         {
-            var fontWeight = Enum.TryParse<FontWeight>(serializableTheme.FontWeight, out var weight)
-                ? weight
-                : FontWeight.Normal;
-
-            return new Skin
-            {
-                Name = serializableTheme.Name,
-                PrimaryColor = Color.Parse(serializableTheme.PrimaryColor),
-                SecondaryColor = Color.Parse(serializableTheme.SecondaryColor),
-                AccentColor = Color.Parse(serializableTheme.AccentColor),
-                PrimaryBackground = Color.Parse(serializableTheme.PrimaryBackground),
-                SecondaryBackground = Color.Parse(serializableTheme.SecondaryBackground),
-                PrimaryTextColor = Color.Parse(serializableTheme.PrimaryTextColor),
-                SecondaryTextColor = Color.Parse(serializableTheme.SecondaryTextColor),
-                BorderColor = Color.Parse(serializableTheme.BorderColor),
-                ErrorColor = Color.Parse(serializableTheme.ErrorColor),
-                WarningColor = Color.Parse(serializableTheme.WarningColor),
-                SuccessColor = Color.Parse(serializableTheme.SuccessColor),
-                FontFamily = new FontFamily(serializableTheme.FontFamily),
-                FontSizeSmall = serializableTheme.FontSizeSmall,
-                FontSizeMedium = serializableTheme.FontSizeMedium,
-                FontSizeLarge = serializableTheme.FontSizeLarge,
-                FontWeight = fontWeight,
-                BorderRadius = serializableTheme.BorderRadius,
-                BorderThickness = new Thickness(
-                    serializableTheme.BorderThickness.Left,
-                    serializableTheme.BorderThickness.Top,
-                    serializableTheme.BorderThickness.Right,
-                    serializableTheme.BorderThickness.Bottom
-                )
-            };
+            return serializableTheme.ToSkin();
         }
 
         private static void CopyPropertiesToInheritable(InheritableSkin target, Skin source)
@@ -414,6 +340,32 @@ namespace AvaloniaThemeManager.Theme
             target.ErrorColor = source.ErrorColor;
             target.WarningColor = source.WarningColor;
             target.SuccessColor = source.SuccessColor;
+            target.ControlThemeUris = new Dictionary<string, string>(source.ControlThemeUris);
+            target.StyleUris = new Dictionary<string, string>(source.StyleUris);
+            target.Typography = new TypographyScale
+            {
+                DisplayLarge = source.Typography.DisplayLarge,
+                DisplayMedium = source.Typography.DisplayMedium,
+                DisplaySmall = source.Typography.DisplaySmall,
+                HeadlineLarge = source.Typography.HeadlineLarge,
+                HeadlineMedium = source.Typography.HeadlineMedium,
+                HeadlineSmall = source.Typography.HeadlineSmall,
+                TitleLarge = source.Typography.TitleLarge,
+                TitleMedium = source.Typography.TitleMedium,
+                TitleSmall = source.Typography.TitleSmall,
+                LabelLarge = source.Typography.LabelLarge,
+                LabelMedium = source.Typography.LabelMedium,
+                LabelSmall = source.Typography.LabelSmall,
+                BodyLarge = source.Typography.BodyLarge,
+                BodyMedium = source.Typography.BodyMedium,
+                BodySmall = source.Typography.BodySmall
+            };
+            target.HeaderFontFamily = source.HeaderFontFamily;
+            target.BodyFontFamily = source.BodyFontFamily;
+            target.MonospaceFontFamily = source.MonospaceFontFamily;
+            target.LineHeight = source.LineHeight;
+            target.LetterSpacing = source.LetterSpacing;
+            target.EnableLigatures = source.EnableLigatures;
             target.Name = source.Name;
         }
     }

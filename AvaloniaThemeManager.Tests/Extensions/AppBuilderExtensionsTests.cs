@@ -1,11 +1,15 @@
 using Avalonia.Media;
+using Avalonia.Headless.XUnit;
+using AvaloniaThemeManager.Controls;
 using AvaloniaThemeManager.Extensions;
 using AvaloniaThemeManager.Models;
 using AvaloniaThemeManager.Services;
 using AvaloniaThemeManager.Services.Interfaces;
 using AvaloniaThemeManager.Theme;
 using AvaloniaThemeManager.ViewModels;
+using AvaloniaThemeManager.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
 namespace AvaloniaThemeManager.Tests.Extensions;
@@ -71,7 +75,9 @@ public sealed class AppBuilderExtensionsTests : IDisposable
         var skinManagerMock = CreateSkinManagerMock();
         ConfigureProviderWithMock(skinManagerMock);
 
+#pragma warning disable CS0618
         var viewModel = new ThemeSettingsViewModel();
+#pragma warning restore CS0618
 
         Assert.Single(viewModel.AvailableThemes);
         viewModel.SelectedTheme = viewModel.AvailableThemes[0];
@@ -85,7 +91,9 @@ public sealed class AppBuilderExtensionsTests : IDisposable
         var skinManagerMock = CreateSkinManagerMock();
         ConfigureProviderWithMock(skinManagerMock);
 
+#pragma warning disable CS0618
         using var viewModel = new QuickThemeSwitcherViewModel();
+#pragma warning restore CS0618
 
         Assert.Single(viewModel.AvailableThemes);
         viewModel.SelectedTheme = viewModel.AvailableThemes[0];
@@ -98,7 +106,64 @@ public sealed class AppBuilderExtensionsTests : IDisposable
     {
         AppBuilderExtensions.ResetForTests();
 
+#pragma warning disable CS0618
         Assert.Throws<InvalidOperationException>(() => new ThemeSettingsViewModel());
+#pragma warning restore CS0618
+    }
+
+    [AvaloniaFact]
+    public void ExplicitConstructors_WorkWithoutConfiguredServiceProvider()
+    {
+        using var testApp = new TestApplication();
+        AppBuilderExtensions.ResetForTests();
+        var skinManagerMock = CreateSkinManagerMock();
+
+        using var quickThemeSwitcherViewModel = new QuickThemeSwitcherViewModel(skinManagerMock.Object, NullLogger.Instance);
+        var themeSettingsViewModel = new ThemeSettingsViewModel(skinManagerMock.Object, NullLogger.Instance);
+        var quickThemeSwitcher = new QuickThemeSwitcher(quickThemeSwitcherViewModel);
+        var themeSettingsDialog = new ThemeSettingsDialog(themeSettingsViewModel);
+        var demoView = new ThemeManagerDemoView(skinManagerMock.Object, NullLogger.Instance);
+
+        Assert.Same(quickThemeSwitcherViewModel, quickThemeSwitcher.DataContext);
+        Assert.Same(themeSettingsViewModel, themeSettingsDialog.DataContext);
+        Assert.IsType<QuickThemeSwitcherViewModel>(demoView.DataContext);
+    }
+
+    [AvaloniaFact]
+    public void CompatibilityConstructors_UseConfiguredServiceProvider()
+    {
+        using var testApp = new TestApplication();
+        var skinManagerMock = CreateSkinManagerMock();
+        ConfigureProviderWithMock(skinManagerMock);
+
+#pragma warning disable CS0618
+        using var quickThemeSwitcherViewModel = new QuickThemeSwitcherViewModel();
+        var themeSettingsViewModel = new ThemeSettingsViewModel();
+        var quickThemeSwitcher = new QuickThemeSwitcher();
+        var themeSettingsDialog = new ThemeSettingsDialog();
+        var demoView = new ThemeManagerDemoView();
+#pragma warning restore CS0618
+
+        Assert.IsType<QuickThemeSwitcherViewModel>(quickThemeSwitcher.DataContext);
+        Assert.IsType<ThemeSettingsViewModel>(themeSettingsDialog.DataContext);
+        Assert.IsType<QuickThemeSwitcherViewModel>(demoView.DataContext);
+        Assert.Single(quickThemeSwitcherViewModel.AvailableThemes);
+        Assert.Single(themeSettingsViewModel.AvailableThemes);
+    }
+
+    [Fact]
+    public void CompatibilityConstructors_ThrowWhenServiceProviderIsNotConfigured()
+    {
+        using var testApp = new TestApplication();
+        AppBuilderExtensions.ResetForTests();
+
+#pragma warning disable CS0618
+        Assert.Throws<InvalidOperationException>(() => new QuickThemeSwitcherViewModel());
+        Assert.Throws<InvalidOperationException>(() => new ThemeSettingsViewModel());
+        Assert.Throws<InvalidOperationException>(() => new QuickThemeSwitcher());
+        Assert.Throws<InvalidOperationException>(() => new ThemeSettingsDialog());
+        Assert.Throws<InvalidOperationException>(() => new ThemeManagerDemoView());
+#pragma warning restore CS0618
     }
 
     private static Mock<ISkinManager> CreateSkinManagerMock()

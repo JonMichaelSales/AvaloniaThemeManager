@@ -8,7 +8,6 @@ using AvaloniaThemeManager.Services.Interfaces;
 using AvaloniaThemeManager.Theme;
 
 using Moq;
-using Xunit;
 
 namespace AvaloniaThemeManager.Tests.Theme
 {
@@ -17,9 +16,8 @@ namespace AvaloniaThemeManager.Tests.Theme
         private readonly Mock<IThemeLoaderService> _themeLoaderServiceMock;
         private readonly Mock<IApplication> _applicationMock;
         private readonly Mock<IResourceDictionary> _resourcesMock;
-        private readonly Styles _styles; // Real Styles instance
-        private readonly AvaloniaStylesWrapper _stylesWrapper;
         private readonly SkinManager _skinManager;
+        private readonly List<IResourceProvider> _mergedDictionaries;
 
         public SkinManagerTests()
         {
@@ -27,12 +25,13 @@ namespace AvaloniaThemeManager.Tests.Theme
             _themeLoaderServiceMock = new Mock<IThemeLoaderService>();
             _applicationMock = new Mock<IApplication>();
             _resourcesMock = new Mock<IResourceDictionary>();
-            _styles = new Styles(); // Use real Styles instance
-            _stylesWrapper = new AvaloniaStylesWrapper(_styles);
+            var styles = new Styles(); // Use real Styles instance
+            var stylesWrapper = new AvaloniaStylesWrapper(styles);
+            _mergedDictionaries = new List<IResourceProvider>();
 
             // Configure the application mock
             _applicationMock.Setup(a => a.Resources).Returns(_resourcesMock.Object);
-            _applicationMock.Setup(a => a.AppStyles).Returns(_stylesWrapper);
+            _applicationMock.Setup(a => a.AppStyles).Returns(stylesWrapper);
             _applicationMock.Setup(a => a.ApplicationLifetime).Returns((IApplicationLifetime?)null);
 
             // Configure theme loader to return empty list by default
@@ -47,6 +46,8 @@ namespace AvaloniaThemeManager.Tests.Theme
                 .Callback<object, object?>((key, value) => resourceDictionary[key] = value);
             _resourcesMock.Setup(r => r.TryGetValue(It.IsAny<object>(), out It.Ref<object?>.IsAny))
                 .Returns<object, object?>((key, value) => resourceDictionary.TryGetValue(key, out value));
+            _resourcesMock.SetupGet(r => r.MergedDictionaries)
+                .Returns(_mergedDictionaries);
 
             // Create SkinManager with dependency injection
             _skinManager = new SkinManager(_themeLoaderServiceMock.Object, _applicationMock.Object);
@@ -195,7 +196,7 @@ namespace AvaloniaThemeManager.Tests.Theme
             // Arrange
             var skin = new Skin { Name = "TestSkin", PrimaryColor = Colors.Blue };
             bool eventRaised = false;
-            _skinManager.SkinChanged += (s, e) => eventRaised = true;
+            _skinManager.SkinChanged += (_, e) => eventRaised = true;
 
             // Act
             _skinManager.ApplySkin(skin);
@@ -331,7 +332,7 @@ namespace AvaloniaThemeManager.Tests.Theme
         }
 
         [Fact]
-        public void ApplySkin_WithControlThemes_UpdatesStyles()
+        public void ApplySkin_WithControlThemes_UpdatesMergedDictionaries()
         {
             // Arrange
             var skin = new Skin
@@ -344,17 +345,17 @@ namespace AvaloniaThemeManager.Tests.Theme
                 }
             };
 
-            var initialCount = _stylesWrapper.Count;
+            var initialCount = _mergedDictionaries.Count;
 
             // Act
             _skinManager.ApplySkin(skin);
 
             // Assert
-            Assert.True(_stylesWrapper.Count >= initialCount, "Should add styles or maintain existing ones");
+            Assert.True(_mergedDictionaries.Count > initialCount, "Should add merged resource dictionaries");
         }
 
         [Fact]
-        public void ApplySkin_WithStyleUris_UpdatesStyles()
+        public void ApplySkin_WithStyleUris_UpdatesMergedDictionaries()
         {
             // Arrange
             var skin = new Skin
@@ -366,13 +367,13 @@ namespace AvaloniaThemeManager.Tests.Theme
                 }
             };
 
-            var initialCount = _stylesWrapper.Count;
+            var initialCount = _mergedDictionaries.Count;
 
             // Act
             _skinManager.ApplySkin(skin);
 
             // Assert
-            Assert.True(_stylesWrapper.Count >= initialCount, "Should add styles");
+            Assert.True(_mergedDictionaries.Count > initialCount, "Should add merged resource dictionaries");
         }
 
         [Fact]
@@ -399,13 +400,14 @@ namespace AvaloniaThemeManager.Tests.Theme
 
             // Act
             _skinManager.ApplySkin(firstSkin);
-            var stylesAfterFirst = _stylesWrapper.Count;
+            var resourcesAfterFirst = _mergedDictionaries.Count;
 
             _skinManager.ApplySkin(secondSkin);
 
-            // Assert - Check that styles were managed properly
-            Assert.True(stylesAfterFirst > 0, "First skin should add styles");
-            Assert.True(_stylesWrapper.Count > 0, "Second skin should maintain or add styles");
+            // Assert - Check that merged dictionaries were managed properly
+            Assert.True(resourcesAfterFirst > 0, "First skin should add merged resource dictionaries");
+            Assert.True(_mergedDictionaries.Count > 0, "Second skin should maintain or add merged resource dictionaries");
+            Assert.Single(_mergedDictionaries);
         }
 
         [Fact]

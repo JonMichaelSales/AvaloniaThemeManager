@@ -8,9 +8,11 @@ namespace AvaloniaThemeManager.Theme
     /// <summary>
     /// Validates theme configurations and provides error recovery.
     /// </summary>
-    public class ThemeValidator
+    public class ThemeValidator : IThemeValidator
     {
         private readonly List<IThemeValidationRule> _validationRules;
+        private readonly IThemeValidationHelper _validationHelper;
+        private readonly IThemeAutoFixer _themeAutoFixer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ThemeValidator"/> class.
@@ -21,21 +23,34 @@ namespace AvaloniaThemeManager.Theme
         /// and accessibility compliance.
         /// </remarks>
         public ThemeValidator()
+            : this(new ThemeValidationHelper(), new ThemeAutoFixer())
         {
-            _validationRules = new List<IThemeValidationRule>
-            {
-                new ColorContrastValidationRule(),
-                new FontSizeValidationRule(),
-                //new BorderValidationRule(),
-                //new NameValidationRule(),
-                //new AccessibilityValidationRule()
-            };
+        }
+
+        private ThemeValidator(IThemeValidationHelper validationHelper, IThemeAutoFixer themeAutoFixer)
+            : this(CreateDefaultRules(validationHelper), validationHelper, themeAutoFixer)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new validator with the provided rules and helper dependency.
+        /// </summary>
+        /// <param name="validationRules">The validation rules to apply.</param>
+        /// <param name="validationHelper">The shared validation helper.</param>
+        /// <param name="themeAutoFixer">The shared theme auto-fixer.</param>
+        public ThemeValidator(
+            IEnumerable<IThemeValidationRule> validationRules,
+            IThemeValidationHelper validationHelper,
+            IThemeAutoFixer themeAutoFixer)
+        {
+            _validationRules = validationRules?.ToList() ?? throw new ArgumentNullException(nameof(validationRules));
+            _validationHelper = validationHelper ?? throw new ArgumentNullException(nameof(validationHelper));
+            _themeAutoFixer = themeAutoFixer ?? throw new ArgumentNullException(nameof(themeAutoFixer));
         }
 
         /// <summary>
         /// Validates a theme and returns validation results.
         /// </summary>
-        // Update the ValidateTheme method in ThemeValidator class
         public ThemeValidationResult ValidateTheme(Skin theme)
         {
             var result = new ThemeValidationResult();
@@ -59,74 +74,7 @@ namespace AvaloniaThemeManager.Theme
         /// </summary>
         public Skin AutoFixTheme(Skin theme)
         {
-            var fixedTheme = CloneSkin(theme);
-
-            // Fix null or invalid name
-            if (string.IsNullOrWhiteSpace(fixedTheme.Name))
-            {
-                fixedTheme.Name = "Custom Theme";
-            }
-
-            // Ensure font sizes are within reasonable bounds
-            fixedTheme.FontSizeSmall = Math.Max(8, Math.Min(20, fixedTheme.FontSizeSmall));
-            fixedTheme.FontSizeMedium = Math.Max(10, Math.Min(24, fixedTheme.FontSizeMedium));
-            fixedTheme.FontSizeLarge = Math.Max(12, Math.Min(32, fixedTheme.FontSizeLarge));
-
-            // Ensure border radius is positive
-            fixedTheme.BorderRadius = Math.Max(0, fixedTheme.BorderRadius);
-
-            // Fix color contrast issues
-            fixedTheme = FixColorContrast(fixedTheme);
-
-            return fixedTheme;
-        }
-
-        private Skin CloneSkin(Skin original)
-        {
-            return new Skin
-            {
-                Name = original.Name,
-                PrimaryColor = original.PrimaryColor,
-                SecondaryColor = original.SecondaryColor,
-                AccentColor = original.AccentColor,
-                PrimaryBackground = original.PrimaryBackground,
-                SecondaryBackground = original.SecondaryBackground,
-                PrimaryTextColor = original.PrimaryTextColor,
-                SecondaryTextColor = original.SecondaryTextColor,
-                FontFamily = original.FontFamily,
-                FontSizeSmall = original.FontSizeSmall,
-                FontSizeMedium = original.FontSizeMedium,
-                FontSizeLarge = original.FontSizeLarge,
-                FontWeight = original.FontWeight,
-                BorderColor = original.BorderColor,
-                BorderThickness = original.BorderThickness,
-                BorderRadius = original.BorderRadius,
-                ErrorColor = original.ErrorColor,
-                WarningColor = original.WarningColor,
-                SuccessColor = original.SuccessColor
-            };
-        }
-
-        private Skin FixColorContrast(Skin theme)
-        {
-            // Calculate contrast ratio and adjust if needed
-            var primaryContrastRatio = CalculateContrastRatio(theme.PrimaryTextColor, theme.PrimaryBackground);
-
-            if (primaryContrastRatio < 4.5) // WCAG AA minimum
-            {
-                // Adjust text color for better contrast
-                theme.PrimaryTextColor = AdjustColorForContrast(theme.PrimaryTextColor, theme.PrimaryBackground, 4.5);
-            }
-
-            var secondaryContrastRatio = CalculateContrastRatio(theme.SecondaryTextColor, theme.SecondaryBackground);
-
-            if (secondaryContrastRatio < 3.0) // More lenient for secondary text
-            {
-                theme.SecondaryTextColor =
-                    AdjustColorForContrast(theme.SecondaryTextColor, theme.SecondaryBackground, 3.0);
-            }
-
-            return theme;
+            return _themeAutoFixer.AutoFixTheme(theme);
         }
 
         /// <summary>
@@ -137,61 +85,19 @@ namespace AvaloniaThemeManager.Theme
         /// <returns></returns>
         public double CalculateContrastRatio(Color foreground, Color background)
         {
-            try
-            {
-                var fgLuminance = GetRelativeLuminance(foreground);
-                var bgLuminance = GetRelativeLuminance(background);
-
-                var lighter = Math.Max(fgLuminance, bgLuminance);
-                var darker = Math.Min(fgLuminance, bgLuminance);
-
-                return (lighter + 0.05) / (darker + 0.05);
-            }
-            catch (Exception)
-            {
-                // Return a safe default contrast ratio
-                return 1.0;
-            }
+            return _validationHelper.CalculateContrastRatio(foreground, background);
         }
 
-        private double GetRelativeLuminance(Color color)
+        private static IEnumerable<IThemeValidationRule> CreateDefaultRules(IThemeValidationHelper validationHelper)
         {
-            var r = GetLuminanceComponent(color.R / 255.0);
-            var g = GetLuminanceComponent(color.G / 255.0);
-            var b = GetLuminanceComponent(color.B / 255.0);
-
-            return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-        }
-
-        private double GetLuminanceComponent(double component)
-        {
-            return component <= 0.03928
-                ? component / 12.92
-                : Math.Pow((component + 0.055) / 1.055, 2.4);
-        }
-
-        private Color AdjustColorForContrast(Color foreground, Color background, double targetRatio)
-        {
-            var bgLuminance = GetRelativeLuminance(background);
-            var isDarkBackground = bgLuminance < 0.5;
-
-            // For dark backgrounds, make text lighter; for light backgrounds, make text darker
-            var step = isDarkBackground ? 10 : -10;
-            var adjustedColor = foreground;
-
-            for (int i = 0; i < 25; i++) // Limit iterations to prevent infinite loop
+            return new IThemeValidationRule[]
             {
-                var ratio = CalculateContrastRatio(adjustedColor, background);
-                if (ratio >= targetRatio) break;
-
-                adjustedColor = Color.FromRgb(
-                    (byte)Math.Max(0, Math.Min(255, adjustedColor.R + step)),
-                    (byte)Math.Max(0, Math.Min(255, adjustedColor.G + step)),
-                    (byte)Math.Max(0, Math.Min(255, adjustedColor.B + step))
-                );
-            }
-
-            return adjustedColor;
+                new ColorContrastValidationRule(validationHelper),
+                new FontSizeValidationRule(),
+                new BorderValidationRule(validationHelper),
+                new NameValidationRule(),
+                new AccessibilityValidationRule(validationHelper)
+            };
         }
     }
    

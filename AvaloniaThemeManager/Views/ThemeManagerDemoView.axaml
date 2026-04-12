@@ -60,7 +60,10 @@
                     </StackPanel>
                 </StackPanel>
 
-                <controls:QuickThemeSwitcher Grid.Column="1" Margin="0,0,15,0" />
+                <ContentControl
+                    x:Name="QuickThemeSwitcherHost"
+                    Grid.Column="1"
+                    Margin="0,0,15,0" />
 
                 <StackPanel
                     Grid.Column="2"
@@ -91,7 +94,7 @@
         <ScrollViewer
             Grid.Row="1"
             Margin="25"
-            Padding="0,25,0,0"
+            Padding="0,25,0,25"
             VerticalScrollBarVisibility="Auto">
             <StackPanel>
 
@@ -828,18 +831,26 @@
                 </Border>
 
                 <!--  Interactive Demo Section  -->
-                <Border Margin="0,0,0,0" Theme="{StaticResource CardBorderTheme}">
-                    <StackPanel>
+                <Border Margin="0,0,0,50" Theme="{StaticResource CardBorderTheme}" >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                        </Grid.RowDefinitions>
                         <TextBlock Text="Interactive Demo" Theme="{StaticResource SectionHeaderTheme}" />
 
-                        <Grid>
+                        <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-
-                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                                <TextBlock Text="Theme Actions" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="*" MinHeight="180"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Theme Actions" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,10,0">
+                               
                                 <StackPanel Spacing="10">
                                     <Button
                                         Click="OpenThemeSettings_Click"
@@ -859,9 +870,9 @@
                                         Theme="{StaticResource SecondaryButtonTheme}" />
                                 </StackPanel>
                             </StackPanel>
-
-                            <StackPanel Grid.Column="1" Spacing="15">
-                                <TextBlock Text="Quick Info" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="Quick Info" Theme="{StaticResource SubheaderTextBlockTheme}" />
+                            <StackPanel Grid.Row="1" Grid.Column="1" Spacing="15">
+                                
                                 <Border
                                     Padding="15"
                                     Background="{DynamicResource BackgroundLightBrush}"
@@ -898,7 +909,7 @@
                                 </Border>
                             </StackPanel>
                         </Grid>
-                    </StackPanel>
+                    </Grid>
                 </Border>
             </StackPanel>
         </ScrollViewer>

@@ -33,7 +33,6 @@
                             <Grid ColumnDefinitions="Auto,*,Auto">
                                 <ContentPresenter
                                     Grid.Column="0"
-                                    Grid.ColumnSpan="1"
                                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                     Content="{TemplateBinding InnerLeftContent}" />
                                 <DockPanel

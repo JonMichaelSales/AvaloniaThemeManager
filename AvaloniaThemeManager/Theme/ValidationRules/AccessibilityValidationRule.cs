@@ -7,11 +7,29 @@ namespace AvaloniaThemeManager.Theme.ValidationRules
     /// </summary>
     public class AccessibilityValidationRule : IThemeValidationRule
     {
+        private readonly IThemeValidationHelper _validationHelper;
+
         private const double WcagAaContrastRatio = 4.5;
         private const double WcagAaaContrastRatio = 7.0;
         private const double MinimumFontSize = 12.0;
         private const double RecommendedMinimumFontSize = 14.0;
         private const double MaximumRecommendedFontSize = 32.0;
+
+        /// <summary>
+        /// Initializes a new rule with the default validation helper.
+        /// </summary>
+        public AccessibilityValidationRule()
+            : this(new ThemeValidationHelper())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new rule with the provided validation helper.
+        /// </summary>
+        public AccessibilityValidationRule(IThemeValidationHelper validationHelper)
+        {
+            _validationHelper = validationHelper ?? throw new ArgumentNullException(nameof(validationHelper));
+        }
 
         /// <summary>
         /// Validates theme for accessibility compliance across multiple criteria.
@@ -21,22 +39,21 @@ namespace AvaloniaThemeManager.Theme.ValidationRules
         public ThemeValidationResult Validate(Skin theme)
         {
             var result = new ThemeValidationResult();
-            var validator = new ThemeValidator();
 
             // WCAG 2.1 Color Contrast Validation
-            ValidateColorContrast(theme, validator, result);
+            ValidateColorContrast(theme, result);
 
             // Font Size Accessibility
             ValidateFontSizes(theme, result);
 
             // Color-Only Information (check for sufficient differentiation)
-            ValidateColorDifferentiation(theme, validator, result);
+            ValidateColorDifferentiation(theme, result);
 
             // Focus Indicators
-            ValidateFocusIndicators(theme, validator, result);
+            ValidateFocusIndicators(theme, result);
 
             // Status Colors Accessibility
-            ValidateStatusColors(theme, validator, result);
+            ValidateStatusColors(theme, result);
 
             // Motion and Animation Considerations
             ValidateVisualStability(theme, result);
@@ -44,26 +61,26 @@ namespace AvaloniaThemeManager.Theme.ValidationRules
             return result;
         }
 
-        private void ValidateColorContrast(Skin theme, ThemeValidator validator, ThemeValidationResult result)
+        private void ValidateColorContrast(Skin theme, ThemeValidationResult result)
         {
             // Primary text on primary background
-            var primaryContrast = validator.CalculateContrastRatio(theme.PrimaryTextColor, theme.PrimaryBackground);
+            var primaryContrast = _validationHelper.CalculateContrastRatio(theme.PrimaryTextColor, theme.PrimaryBackground);
             ValidateContrastRatio(primaryContrast, "Primary text on primary background", result);
 
             // Primary text on secondary background
-            var primaryOnSecondaryContrast = validator.CalculateContrastRatio(theme.PrimaryTextColor, theme.SecondaryBackground);
+            var primaryOnSecondaryContrast = _validationHelper.CalculateContrastRatio(theme.PrimaryTextColor, theme.SecondaryBackground);
             ValidateContrastRatio(primaryOnSecondaryContrast, "Primary text on secondary background", result);
 
             // Secondary text on primary background
-            var secondaryContrast = validator.CalculateContrastRatio(theme.SecondaryTextColor, theme.PrimaryBackground);
+            var secondaryContrast = _validationHelper.CalculateContrastRatio(theme.SecondaryTextColor, theme.PrimaryBackground);
             ValidateContrastRatio(secondaryContrast, "Secondary text on primary background", result, isSecondaryText: true);
 
             // Secondary text on secondary background
-            var secondaryOnSecondaryContrast = validator.CalculateContrastRatio(theme.SecondaryTextColor, theme.SecondaryBackground);
+            var secondaryOnSecondaryContrast = _validationHelper.CalculateContrastRatio(theme.SecondaryTextColor, theme.SecondaryBackground);
             ValidateContrastRatio(secondaryOnSecondaryContrast, "Secondary text on secondary background", result, isSecondaryText: true);
 
             // Accent color accessibility
-            var accentOnPrimaryContrast = validator.CalculateContrastRatio(theme.AccentColor, theme.PrimaryBackground);
+            var accentOnPrimaryContrast = _validationHelper.CalculateContrastRatio(theme.AccentColor, theme.PrimaryBackground);
             if (accentOnPrimaryContrast < 3.0)
             {
                 result.AddWarning($"Accent color on primary background has low contrast ({accentOnPrimaryContrast:F2}:1). May not be distinguishable for users with visual impairments");
@@ -123,89 +140,89 @@ namespace AvaloniaThemeManager.Theme.ValidationRules
             }
         }
 
-        private void ValidateColorDifferentiation(Skin theme, ThemeValidator validator, ThemeValidationResult result)
+        private void ValidateColorDifferentiation(Skin theme, ThemeValidationResult result)
         {
             // Check if primary and secondary colors are sufficiently different
-            var primarySecondaryDiff = validator.CalculateContrastRatio(theme.PrimaryColor, theme.SecondaryColor);
+            var primarySecondaryDiff = _validationHelper.CalculateContrastRatio(theme.PrimaryColor, theme.SecondaryColor);
             if (primarySecondaryDiff < 1.5)
             {
                 result.AddWarning($"Primary and secondary colors are very similar ({primarySecondaryDiff:F2}:1). Users may have difficulty distinguishing them");
             }
 
             // Check background color differentiation
-            var backgroundDiff = validator.CalculateContrastRatio(theme.PrimaryBackground, theme.SecondaryBackground);
+            var backgroundDiff = _validationHelper.CalculateContrastRatio(theme.PrimaryBackground, theme.SecondaryBackground);
             if (backgroundDiff < 1.3)
             {
                 result.AddWarning($"Primary and secondary backgrounds are very similar ({backgroundDiff:F2}:1). May reduce visual hierarchy");
             }
 
             // Ensure accent color is sufficiently different from primary colors
-            var accentPrimaryDiff = validator.CalculateContrastRatio(theme.AccentColor, theme.PrimaryColor);
+            var accentPrimaryDiff = _validationHelper.CalculateContrastRatio(theme.AccentColor, theme.PrimaryColor);
             if (accentPrimaryDiff < 2.0)
             {
                 result.AddWarning($"Accent color is too similar to primary color ({accentPrimaryDiff:F2}:1). May not provide sufficient emphasis");
             }
         }
 
-        private void ValidateFocusIndicators(Skin theme, ThemeValidator validator, ThemeValidationResult result)
+        private void ValidateFocusIndicators(Skin theme, ThemeValidationResult result)
         {
             // Check if accent color (typically used for focus) is visible against backgrounds
-            var accentFocusVisibility = validator.CalculateContrastRatio(theme.AccentColor, theme.PrimaryBackground);
+            var accentFocusVisibility = _validationHelper.CalculateContrastRatio(theme.AccentColor, theme.PrimaryBackground);
             if (accentFocusVisibility < 3.0)
             {
                 result.AddError($"Accent color (focus indicator) has insufficient contrast against primary background ({accentFocusVisibility:F2}:1). Focus may not be visible to all users");
             }
 
             // Check border visibility for focus indicators
-            var borderFocusVisibility = validator.CalculateContrastRatio(theme.BorderColor, theme.PrimaryBackground);
+            var borderFocusVisibility = _validationHelper.CalculateContrastRatio(theme.BorderColor, theme.PrimaryBackground);
             if (borderFocusVisibility < 2.0)
             {
                 result.AddWarning($"Border color has low contrast against primary background ({borderFocusVisibility:F2}:1). May impact focus indicator visibility");
             }
         }
 
-        private void ValidateStatusColors(Skin theme, ThemeValidator validator, ThemeValidationResult result)
+        private void ValidateStatusColors(Skin theme, ThemeValidationResult result)
         {
             // Validate error color visibility
-            var errorVisibility = validator.CalculateContrastRatio(theme.ErrorColor, theme.PrimaryBackground);
+            var errorVisibility = _validationHelper.CalculateContrastRatio(theme.ErrorColor, theme.PrimaryBackground);
             if (errorVisibility < 3.0)
             {
                 result.AddError($"Error color has insufficient contrast ({errorVisibility:F2}:1). Critical error messages may not be visible");
             }
 
             // Validate warning color visibility
-            var warningVisibility = validator.CalculateContrastRatio(theme.WarningColor, theme.PrimaryBackground);
+            var warningVisibility = _validationHelper.CalculateContrastRatio(theme.WarningColor, theme.PrimaryBackground);
             if (warningVisibility < 3.0)
             {
                 result.AddWarning($"Warning color has low contrast ({warningVisibility:F2}:1). Warning messages may not be clearly visible");
             }
 
             // Validate success color visibility
-            var successVisibility = validator.CalculateContrastRatio(theme.SuccessColor, theme.PrimaryBackground);
+            var successVisibility = _validationHelper.CalculateContrastRatio(theme.SuccessColor, theme.PrimaryBackground);
             if (successVisibility < 3.0)
             {
                 result.AddWarning($"Success color has low contrast ({successVisibility:F2}:1). Success messages may not be clearly visible");
             }
 
             // Check that status colors are sufficiently different from each other
-            ValidateStatusColorDifferentiation(theme, validator, result);
+            ValidateStatusColorDifferentiation(theme, result);
         }
 
-        private void ValidateStatusColorDifferentiation(Skin theme, ThemeValidator validator, ThemeValidationResult result)
+        private void ValidateStatusColorDifferentiation(Skin theme, ThemeValidationResult result)
         {
-            var errorWarningDiff = validator.CalculateContrastRatio(theme.ErrorColor, theme.WarningColor);
+            var errorWarningDiff = _validationHelper.CalculateContrastRatio(theme.ErrorColor, theme.WarningColor);
             if (errorWarningDiff < 2.0)
             {
                 result.AddWarning($"Error and warning colors are too similar ({errorWarningDiff:F2}:1). Users may confuse error and warning states");
             }
 
-            var errorSuccessDiff = validator.CalculateContrastRatio(theme.ErrorColor, theme.SuccessColor);
+            var errorSuccessDiff = _validationHelper.CalculateContrastRatio(theme.ErrorColor, theme.SuccessColor);
             if (errorSuccessDiff < 2.0)
             {
                 result.AddWarning($"Error and success colors are too similar ({errorSuccessDiff:F2}:1). Users may confuse error and success states");
             }
 
-            var warningSuccessDiff = validator.CalculateContrastRatio(theme.WarningColor, theme.SuccessColor);
+            var warningSuccessDiff = _validationHelper.CalculateContrastRatio(theme.WarningColor, theme.SuccessColor);
             if (warningSuccessDiff < 2.0)
             {
                 result.AddWarning($"Warning and success colors are too similar ({warningSuccessDiff:F2}:1). Users may confuse warning and success states");
@@ -221,7 +238,7 @@ namespace AvaloniaThemeManager.Theme.ValidationRules
             }
 
             // Check for extreme contrast that might cause eye strain
-            var textBackgroundContrast = new ThemeValidator().CalculateContrastRatio(theme.PrimaryTextColor, theme.PrimaryBackground);
+            var textBackgroundContrast = _validationHelper.CalculateContrastRatio(theme.PrimaryTextColor, theme.PrimaryBackground);
             if (textBackgroundContrast > 15.0)
             {
                 result.AddWarning($"Very high contrast ratio ({textBackgroundContrast:F2}:1) may cause eye strain for some users during extended use");

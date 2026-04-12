@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Reactive;
 using System.Threading.Tasks;
 using System.Timers;
-using AvaloniaThemeManager.Extensions;
 using AvaloniaThemeManager.Theme;
 using AvaloniaThemeManager.ViewModels;
 using AvaloniaThemeManager.Utility;
@@ -23,9 +22,9 @@ namespace DemoApplication.ViewModels
         private double _progressValue = 45;
         private string _statusText = "Ready";
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(ISkinManager skinManager)
         {
-            _skinManager = AppBuilderExtensions.GetRequiredService<ISkinManager>();
+            _skinManager = skinManager ?? throw new ArgumentNullException(nameof(skinManager));
 
             // Initialize sample data
             SampleData = new ObservableCollection<SampleDataItem>
@@ -172,7 +171,7 @@ namespace DemoApplication.ViewModels
                 StatusText = "Opening theme settings...";
 
                 // Create and show theme settings dialog
-                var themeSettingsDialog = new AvaloniaThemeManager.Views.ThemeSettingsDialog();
+                var themeSettingsDialog = new AvaloniaThemeManager.Views.ThemeSettingsDialog(_skinManager);
 
                 // Get the main window
                 var mainWindow = WindowTools.GetMainWindow();
