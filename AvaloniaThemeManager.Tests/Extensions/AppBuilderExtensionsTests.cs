@@ -126,7 +126,7 @@ public sealed class AppBuilderExtensionsTests : IDisposable
 
         Assert.Same(quickThemeSwitcherViewModel, quickThemeSwitcher.DataContext);
         Assert.Same(themeSettingsViewModel, themeSettingsDialog.DataContext);
-        Assert.IsType<QuickThemeSwitcherViewModel>(demoView.DataContext);
+        Assert.IsType<ThemeManagerDemoViewModel>(demoView.DataContext);
     }
 
     [AvaloniaFact]
@@ -146,7 +146,7 @@ public sealed class AppBuilderExtensionsTests : IDisposable
 
         Assert.IsType<QuickThemeSwitcherViewModel>(quickThemeSwitcher.DataContext);
         Assert.IsType<ThemeSettingsViewModel>(themeSettingsDialog.DataContext);
-        Assert.IsType<QuickThemeSwitcherViewModel>(demoView.DataContext);
+        Assert.IsType<ThemeManagerDemoViewModel>(demoView.DataContext);
         Assert.Single(quickThemeSwitcherViewModel.AvailableThemes);
         Assert.Single(themeSettingsViewModel.AvailableThemes);
     }

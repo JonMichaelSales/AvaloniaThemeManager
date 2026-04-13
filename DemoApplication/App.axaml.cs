@@ -5,7 +5,6 @@ using AvaloniaThemeManager.Extensions;
 using AvaloniaThemeManager.Services.Interfaces;
 using AvaloniaThemeManager.Theme;
 using AvaloniaThemeManager.Views;
-using DemoApplication.ViewModels;
 using DemoApplication.Views;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -21,7 +20,6 @@ public partial class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         var skinManager = AppBuilderExtensions.GetRequiredService<ISkinManager>();
-        var themeValidator = AppBuilderExtensions.GetRequiredService<IThemeValidator>();
         var dialogService = AppBuilderExtensions.GetRequiredService<IDialogService>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -31,15 +29,7 @@ public partial class App : Application
                 NullLogger.Instance,
                 dialogService);
 
-            desktop.MainWindow = new MainWindow(
-                demoView,
-                skinManager,
-                themeValidator,
-                dialogService,
-                NullLogger.Instance)
-            {
-                DataContext = new MainWindowViewModel(skinManager)
-            };
+            desktop.MainWindow = new MainWindow(demoView);
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
@@ -48,10 +38,7 @@ public partial class App : Application
                 NullLogger.Instance,
                 dialogService);
 
-            singleViewPlatform.MainView = new MainView(demoView)
-            {
-                DataContext = new MainWindowViewModel(skinManager)
-            };
+            singleViewPlatform.MainView = new MainView(demoView);
         }
 
         base.OnFrameworkInitializationCompleted();

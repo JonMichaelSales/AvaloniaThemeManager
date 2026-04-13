@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AvaloniaThemeManager\AvaloniaThemeManager.csproj" />
+    <ProjectReference Include="..\DemoApplication\DemoApplication.csproj" />
   </ItemGroup>
 
   <ItemGroup>

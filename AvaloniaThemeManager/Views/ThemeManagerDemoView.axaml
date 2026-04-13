@@ -6,10 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:icons="clr-namespace:AvaloniaThemeManager.Icons"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="clr-namespace:AvaloniaThemeManager.ViewModels"
     MinWidth="1200"
     MinHeight="700"
-    x:DataType="vm:ThemeSettingsViewModel"
     Background="{DynamicResource BackgroundBrush}"
     mc:Ignorable="d">
 
@@ -69,7 +67,7 @@
                     Grid.Column="2"
                     Orientation="Horizontal"
                     Spacing="10">
-                    <Button Click="OpenThemeSettings_Click" Theme="{StaticResource ToolbarButtonTheme}">
+                    <Button Command="{Binding OpenThemeSettingsCommand}" Theme="{StaticResource ToolbarButtonTheme}">
                         <Button.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Path
@@ -83,7 +81,7 @@
                         </Button.Content>
                     </Button>
                     <Button
-                        Click="ExportTheme_Click"
+                        Command="{Binding ExportThemeCommand}"
                         Content="Export Theme"
                         Theme="{StaticResource ToolbarPrimaryButtonTheme}" />
                 </StackPanel>
@@ -853,19 +851,19 @@
                                
                                 <StackPanel Spacing="10">
                                     <Button
-                                        Click="OpenThemeSettings_Click"
+                                        Command="{Binding OpenThemeSettingsCommand}"
                                         Content="Open Theme Settings Dialog"
                                         Theme="{StaticResource PrimaryButtonTheme}" />
                                     <Button
-                                        Click="ShowValidationDemo_Click"
+                                        Command="{Binding ShowValidationDemoCommand}"
                                         Content="Show Validation Dialog Demo"
                                         Theme="{StaticResource SecondaryButtonTheme}" />
                                     <Button
-                                        Click="ShowErrorDemo_Click"
+                                        Command="{Binding ShowErrorDemoCommand}"
                                         Content="Show Error Dialog Demo"
                                         Theme="{StaticResource SecondaryButtonTheme}" />
                                     <Button
-                                        Click="ShowConfirmationDemo_Click"
+                                        Command="{Binding ShowConfirmationDemoCommand}"
                                         Content="Show Confirmation Dialog Demo"
                                         Theme="{StaticResource SecondaryButtonTheme}" />
                                 </StackPanel>
@@ -929,7 +927,7 @@
                     Grid.Column="0"
                     Orientation="Horizontal"
                     Spacing="15">
-                    <TextBlock Text="Ready - All theme components loaded successfully" Theme="{StaticResource StatusBarMainTextTheme}" />
+                    <TextBlock Text="{Binding StatusText}" Theme="{StaticResource StatusBarMainTextTheme}" />
                     <StackPanel Orientation="Horizontal" Spacing="5">
                         <Path
                             Width="12"
@@ -937,7 +935,7 @@
                             Data="{x:Static icons:ApplicationIcons.SuccessGeometry}"
                             Fill="{DynamicResource SuccessBrush}"
                             Stretch="Uniform" />
-                        <TextBlock Text="Theme validation passed" Theme="{StaticResource StatusBarMainTextTheme}" />
+                        <TextBlock Text="{Binding ValidationStatusText}" Theme="{StaticResource StatusBarMainTextTheme}" />
                     </StackPanel>
                 </StackPanel>
 
@@ -945,12 +943,12 @@
                     Grid.Column="1"
                     Orientation="Horizontal"
                     Spacing="10">
-                    <TextBlock x:Name="LibraryVersionText" Theme="{StaticResource StatusBarMainTextTheme}" />
+                    <TextBlock Text="{Binding LibraryVersionText}" Theme="{StaticResource StatusBarMainTextTheme}" />
                     <Separator
                         Width="1"
                         Height="16"
                         Background="{DynamicResource BorderBrush}" />
-                    <TextBlock x:Name="AvaloniaVersionText" Theme="{StaticResource StatusBarMainTextTheme}" />
+                    <TextBlock Text="{Binding AvaloniaVersionText}" Theme="{StaticResource StatusBarMainTextTheme}" />
                 </StackPanel>
             </Grid>
         </Border>
