@@ -24,7 +24,6 @@ namespace AvaloniaThemeManager.ViewModels
         {
             if (disposing)
             {
-                // TODO release managed resources here
             }
         }
 

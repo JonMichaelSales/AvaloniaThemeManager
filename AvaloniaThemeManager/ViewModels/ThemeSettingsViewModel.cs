@@ -56,6 +56,7 @@ namespace AvaloniaThemeManager.ViewModels
 
             AvailableThemes = new ObservableCollection<ThemeInfo>();
             ApplyThemeCommand = ReactiveCommand.Create(ApplyTheme);
+            ResetThemeCommand = ReactiveCommand.Create(ResetToDefault);
 
             LoadAvailableThemes();
             LoadCurrentTheme();
@@ -78,6 +79,10 @@ namespace AvaloniaThemeManager.ViewModels
         /// It ensures that the application's appearance is updated dynamically to reflect the chosen theme.
         /// </remarks>
         public ReactiveCommand<Unit, Unit> ApplyThemeCommand { get; }
+        /// <summary>
+        /// Gets the command used to reset the selected theme back to the default theme.
+        /// </summary>
+        public ReactiveCommand<Unit, Unit> ResetThemeCommand { get; }
 
         /// <summary>
         /// Gets or sets the currently selected theme.

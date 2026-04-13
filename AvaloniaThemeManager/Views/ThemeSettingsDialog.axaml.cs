@@ -59,14 +59,6 @@ public partial class ThemeSettingsDialog : Window
     {
     }
 
-    private void ResetButton_Click(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is ThemeSettingsViewModel viewModel)
-        {
-            viewModel.ResetToDefault();
-        }
-    }
-
     private void CloseButton_Click(object? sender, RoutedEventArgs e)
     {
         Close();

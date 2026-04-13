@@ -84,7 +84,7 @@ namespace AvaloniaThemeManager.Views
                 var headerBorder = this.FindControl<Border>("HeaderBorder");
                 if (headerBorder != null)
                 {
-                    headerBorder.Background = WindowTools.GetMainWindow()!.FindResource("WarningBrush") as Avalonia.Media.IBrush;
+                    headerBorder.Background = WindowTools.TryGetMainWindow()?.FindResource("WarningBrush") as Avalonia.Media.IBrush;
                 }
             }
             else
@@ -95,7 +95,7 @@ namespace AvaloniaThemeManager.Views
                 var headerBorder = this.FindControl<Border>("HeaderBorder");
                 if (headerBorder != null)
                 {
-                    headerBorder.Background = WindowTools.GetMainWindow()!.FindResource("SuccessBrush") as Avalonia.Media.IBrush;
+                    headerBorder.Background = WindowTools.TryGetMainWindow()?.FindResource("SuccessBrush") as Avalonia.Media.IBrush;
                 }
             }
         }

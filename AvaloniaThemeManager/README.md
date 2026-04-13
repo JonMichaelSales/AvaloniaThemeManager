@@ -1,72 +1,70 @@
-﻿# AvaloniaThemeManager
+# AvaloniaThemeManager
 
-A comprehensive theme management library for Avalonia UI applications with multiple built-in themes, dynamic theme switching, and extensive control styling.
+Theme management library for Avalonia UI applications with built-in themes, runtime theme switching, import/export, validation, and ready-made theme UI components.
 
-[![NuGet Version](https://img.shields.io/nuget/v/AvaloniaThemeManager.svg)](https://www.nuget.org/packages/AvaloniaThemeManager/)
-[![NuGet Downloads](https://img.shields.io/nuget/dt/AvaloniaThemeManager.svg)](https://www.nuget.org/packages/AvaloniaThemeManager/)
+[![NuGet Version](https://img.shields.io/nuget/v/AvaloniaSkinManager.svg)](https://www.nuget.org/packages/AvaloniaSkinManager/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/AvaloniaSkinManager.svg)](https://www.nuget.org/packages/AvaloniaSkinManager/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Features
+## Package
 
-- **7 Built-in Themes**: Dark, Light, Ocean Blue, Forest Green, Purple Haze, High Contrast, and Cyberpunk
-- **Dynamic Theme Switching**: Change themes at runtime with smooth transitions
-- **Persistent Settings**: Automatically saves and restores user theme preferences
-- **Comprehensive Styling**: Extensive theme support for all major Avalonia controls
-- **Quick Switcher Control**: Ready-to-use theme switcher component
-- **Theme Settings Dialog**: Complete settings UI for theme management
-- **MVVM Architecture**: Reactive and clean separation of concerns
-- **Easy Integration**: Simple setup with AppBuilder extensions
-
-## Installation
-
-Install via NuGet Package Manager:
+Install the published package:
 
 ```bash
-dotnet add package AvaloniaThemeManager
+dotnet add package AvaloniaSkinManager
 ```
 
-Or via Package Manager Console:
+## What it provides
 
-```powershell
-Install-Package AvaloniaThemeManager
-```
+- 12 built-in themes, including `Dark`, `Light`, `Ocean Blue`, `ModernIce`, `RetroTerminal`, and `Material Design 3`
+- runtime theme switching through `ISkinManager`
+- saved-theme restoration during app startup
+- theme import/export and theme-pack export helpers
+- validation and auto-fix services for custom themes
+- ready-to-use UI components:
+  - `QuickThemeSwitcher`
+  - `ThemeSettingsDialog`
+  - `ThemeManagerDemoView`
 
-## Quick Start
+## Quick start
 
-### 1. Setup in Program.cs
+### 1. Configure the app
 
 ```csharp
 using Avalonia;
+using Avalonia.ReactiveUI;
 using AvaloniaThemeManager.Extensions;
 
 public static AppBuilder BuildAvaloniaApp()
     => AppBuilder.Configure<App>()
         .UsePlatformDetect()
-        .UseThemeManager() // Add this line
-        .LogToTrace()
+        .UseThemeManager()
+        .WithInterFont()
         .UseReactiveUI();
 ```
 
-### 2. Include Styles in App.axaml
+### 2. Merge the library theme resources
 
 ```xml
-<Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="YourApp.App">
+<Application
+    x:Class="YourApp.App"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Application.Resources>
-            <ResourceDictionary>
-            <!-- Include the skin manager ControlTheme resources -->            
-            <ResourceInclude Source="avares://AvaloniaThemeManager/Themes/CustomThemes.axaml" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://AvaloniaThemeManager/Themes/CustomThemes.axaml" />
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
+    </Application.Resources>
+
     <Application.Styles>
         <FluentTheme />
-        <!-- Include AvaloniaThemeManager styles -->
-        
     </Application.Styles>
 </Application>
 ```
 
-### 3. Basic Theme Switching
+### 3. Resolve and use `ISkinManager`
 
 ```csharp
 using AvaloniaThemeManager.Extensions;
@@ -74,232 +72,128 @@ using AvaloniaThemeManager.Theme;
 
 var skinManager = AppBuilderExtensions.GetRequiredService<ISkinManager>();
 
-// Switch to a different theme
 skinManager.ApplySkin("Dark");
-skinManager.ApplySkin("Ocean Blue");
-skinManager.ApplySkin("Cyberpunk");
-
-// Get available themes
 var availableThemes = skinManager.GetAvailableSkinNames();
-
-// Listen for theme changes
-skinManager.SkinChanged += (sender, args) =>
-{
-    Console.WriteLine("Theme changed!");
-};
 ```
 
-## Built-in Themes
+## DI-friendly usage
 
-| Theme Name | Description | Preview |
-|------------|-------------|---------|
-| **Dark** | Professional dark theme with blue accents | ![Dark Theme](https://via.placeholder.com/100x60/2C313D/FFFFFF?text=Dark) |
-| **Light** | Clean light theme perfect for bright environments | ![Light Theme](https://via.placeholder.com/100x60/F5F5F5/333333?text=Light) |
-| **Ocean Blue** | Deep blue theme inspired by ocean depths | ![Ocean Blue](https://via.placeholder.com/100x60/0F2A4A/FFFFFF?text=Ocean) |
-| **Forest Green** | Nature-inspired green theme | ![Forest Green](https://via.placeholder.com/100x60/1B3A2D/FFFFFF?text=Forest) |
-| **Purple Haze** | Rich purple theme with mystical vibes | ![Purple Haze](https://via.placeholder.com/100x60/301E4E/FFFFFF?text=Purple) |
-| **High Contrast** | Maximum contrast for accessibility | ![High Contrast](https://via.placeholder.com/100x60/000000/FFFFFF?text=Contrast) |
-| **Cyberpunk** | Futuristic neon theme with hot pink accents | ![Cyberpunk](https://via.placeholder.com/100x60/0A0321/F0F0FF?text=Cyber) |
+The library now prefers explicit dependency injection. Compatibility constructors still exist on a few UI types, but new code should pass dependencies explicitly.
 
-## Usage Examples
-
-### Using the Quick Theme Switcher Control
-
-```xml
-<UserControl xmlns:controls="clr-namespace:AvaloniaThemeManager.Controls;assembly=AvaloniaThemeManager">
-    <StackPanel>
-        <!-- Quick theme switcher dropdown -->
-        <controls:QuickThemeSwitcher />
-        
-        <!-- Your other UI elements -->
-        <Button Content="Sample Button" />
-        <TextBox Watermark="Sample TextBox" />
-    </StackPanel>
-</UserControl>
-```
-
-### Opening the Theme Settings Dialog
-
-```csharp
-using AvaloniaThemeManager.Views;
-
-private async void OpenThemeSettings()
-{
-    var dialog = new ThemeSettingsDialog();
-    await dialog.ShowDialog(this); // 'this' is your parent window
-}
-```
-
-### Creating Custom Themes
+### Open the theme settings dialog
 
 ```csharp
 using AvaloniaThemeManager.Theme;
-using Avalonia.Media;
+using AvaloniaThemeManager.Views;
+using Microsoft.Extensions.Logging.Abstractions;
 
 var skinManager = AppBuilderExtensions.GetRequiredService<ISkinManager>();
+var dialog = new ThemeSettingsDialog(skinManager, NullLogger.Instance);
+await dialog.ShowDialog(this);
+```
 
-// Create a custom theme
+### Use the quick switcher
+
+```xml
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:AvaloniaThemeManager.Controls;assembly=AvaloniaThemeManager">
+    <controls:QuickThemeSwitcher />
+</UserControl>
+```
+
+### Use the demo view
+
+```csharp
+using AvaloniaThemeManager.Services.Interfaces;
+using AvaloniaThemeManager.Theme;
+using AvaloniaThemeManager.Views;
+using Microsoft.Extensions.Logging.Abstractions;
+
+var skinManager = AppBuilderExtensions.GetRequiredService<ISkinManager>();
+var dialogService = AppBuilderExtensions.GetRequiredService<IDialogService>();
+
+var demoView = new ThemeManagerDemoView(
+    skinManager,
+    NullLogger.Instance,
+    dialogService);
+```
+
+## Import, export, and validation
+
+```csharp
+using AvaloniaThemeManager.Theme;
+
+var skinManager = AppBuilderExtensions.GetRequiredService<ISkinManager>();
+var validator = AppBuilderExtensions.GetRequiredService<IThemeValidator>();
+
+var currentSkin = skinManager.CurrentSkin;
+var validation = validator.ValidateTheme(currentSkin!);
+
+if (validation.IsValid)
+{
+    await ThemeImportExport.ExportThemeAsync(currentSkin!, "theme.json");
+}
+```
+
+The default export path now writes the full runtime theme model, including typography and control/style URI metadata.
+
+## Custom themes
+
+```csharp
+using Avalonia.Media;
+using AvaloniaThemeManager.Theme;
+
 var customTheme = new Skin
 {
-    Name = "My Custom Theme",
-    PrimaryColor = Color.Parse("#FF6B6B"),
-    SecondaryColor = Color.Parse("#4ECDC4"),
-    AccentColor = Color.Parse("#45B7D1"),
-    PrimaryBackground = Color.Parse("#2C3E50"),
-    SecondaryBackground = Color.Parse("#34495E"),
+    Name = "My Theme",
+    PrimaryColor = Color.Parse("#343B48"),
+    SecondaryColor = Color.Parse("#3D4654"),
+    AccentColor = Color.Parse("#3498DB"),
+    PrimaryBackground = Color.Parse("#2C313D"),
+    SecondaryBackground = Color.Parse("#464F62"),
     PrimaryTextColor = Color.Parse("#FFFFFF"),
-    SecondaryTextColor = Color.Parse("#BDC3C7"),
-    BorderColor = Color.Parse("#7F8C8D"),
+    SecondaryTextColor = Color.Parse("#CCCCCC"),
+    BorderColor = Color.Parse("#5D6778"),
     ErrorColor = Color.Parse("#E74C3C"),
     WarningColor = Color.Parse("#F39C12"),
     SuccessColor = Color.Parse("#2ECC71")
 };
 
-// Register and apply the custom theme
-skinManager.RegisterSkin("Custom", customTheme);
-skinManager.ApplySkin("Custom");
+var skinManager = AppBuilderExtensions.GetRequiredService<ISkinManager>();
+skinManager.RegisterSkin(customTheme.Name, customTheme);
+skinManager.ApplySkin(customTheme.Name);
 ```
 
-### Advanced Configuration
+## Public services
 
-```csharp
-// Configure theme manager during startup
-public static AppBuilder BuildAvaloniaApp()
-    => AppBuilder.Configure<App>()
-        .UsePlatformDetect()
-        .UseThemeManager(manager =>
-        {
-            // Register custom themes
-            manager.RegisterSkin("Corporate", corporateTheme);
-            
-            // Set default theme
-            manager.ApplySkin("Dark");
-        })
-        .LogToTrace()
-        .UseReactiveUI();
-```
+- `ISkinManager`
+- `IThemeValidator`
+- `IThemeAutoFixer`
+- `IThemeLoaderService`
+- `IDialogService`
+- `ThemeInheritanceManager`
 
-## MVVM Integration
+## Notes
 
-### Theme Settings ViewModel
-
-```csharp
-using AvaloniaThemeManager.ViewModels;
-using AvaloniaThemeManager.Extensions;
-using AvaloniaThemeManager.Theme;
-
-public class MainWindowViewModel : ViewModelBase
-{
-    public ThemeSettingsViewModel ThemeSettings { get; }
-    
-    public MainWindowViewModel()
-    {
-        var skinManager = AppBuilderExtensions.GetRequiredService<ISkinManager>();
-        ThemeSettings = new ThemeSettingsViewModel(
-            skinManager,
-            Microsoft.Extensions.Logging.Abstractions.NullLogger.Instance);
-    }
-}
-```
-
-### Data Binding in XAML
-
-```xml
-<Window xmlns:vm="clr-namespace:AvaloniaThemeManager.ViewModels;assembly=AvaloniaThemeManager">
-    <ComboBox ItemsSource="{Binding ThemeSettings.AvailableThemes}"
-              SelectedItem="{Binding ThemeSettings.SelectedTheme}">
-        <ComboBox.ItemTemplate>
-            <DataTemplate>
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <Ellipse Width="12" Height="12" Fill="{Binding PreviewColor}" />
-                    <TextBlock Text="{Binding Name}" />
-                </StackPanel>
-            </DataTemplate>
-        </ComboBox.ItemTemplate>
-    </ComboBox>
-</Window>
-```
-
-## Styled Controls
-
-AvaloniaThemeManager provides comprehensive styling for:
-
-- **Buttons** (Primary, Secondary, Browse, Toolbar variants)
-- **TextBoxes** (Standard, Dialog variants)
-- **ComboBoxes** and ComboBoxItems
-- **CheckBoxes** with custom styling
-- **TabControls** and TabItems
-- **Borders** (Default, Card, Status Bar, Toolbar variants)
-- **TextBlocks** (Various typography styles)
-- **Separators** (Horizontal and Vertical)
-- **PathIcons** with multiple size variants
-- **Expanders** with animated transitions
-- **Windows** (Default and Dialog variants)
-
-## Persistence
-
-Theme preferences are automatically saved to:
-- **Windows**: `%LocalAppData%/ResumeForge/appsettings.json`
-- **macOS**: `~/Library/Application Support/ResumeForge/appsettings.json`
-- **Linux**: `~/.local/share/ResumeForge/appsettings.json`
-
-## Requirements
-
-- **.NET 8.0** or higher
-- **Avalonia UI 11.3.0** or higher
-- **C# 12** language features
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-### Development Setup
-
-1. Clone the repository
-2. Open in Visual Studio 2022 or JetBrains Rider
-3. Restore NuGet packages
-4. Build and run the sample application
-
-### Adding New Themes
-
-1. Create a new `Skin` object with your color scheme
-2. Register it in `SkinManager.RegisterDefaultSkins()`
-3. Add theme description in `GetThemeDescription()` method
-4. Test with all styled controls
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- The package ID is `AvaloniaSkinManager`.
+- The library namespace remains `AvaloniaThemeManager`.
+- Startup initialization restores the last saved theme when `UseThemeManager()` is used.
+- Demo and compatibility constructors are still present, but new code should prefer explicit constructors and resolved services.
 
 ## Changelog
 
-### v2.0.0 (2026-04-09)
-- Breaking change: `SkinManager` is now DI-only and singleton access has been removed
-- Fixed inheritable theme resolution for typography, font family, ligature, and URI overrides
-- Hardened startup initialization, demo runtime outputs, and package metadata
+### 2.0.0
 
-### v1.0.0 (2025-01-XX)
-- Initial release
-- 7 built-in themes
-- Comprehensive control styling
-- Dynamic theme switching
-- Settings persistence
-- Quick switcher component
-- Theme settings dialog
-- MVVM architecture
+- moved the library to a DI-first model
+- removed the old `SkinManager.Instance` singleton path
+- fixed full-fidelity theme import/export
+- fixed inheritable theme resolution for typography and URI overrides
+- unified validation policy and split validation from autofix
+- reduced demo app and demo view orchestration code-behind
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/jonsmith/AvaloniaThemeManager/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/jonsmith/AvaloniaThemeManager/discussions)
-- **Documentation**: [Wiki](https://github.com/jonsmith/AvaloniaThemeManager/wiki)
-
-## Acknowledgments
-
-- Built with [Avalonia UI](https://avaloniaui.net/)
-- Inspired by Material Design and Fluent Design principles
-- Icons from [Material Design Icons](https://materialdesignicons.com/)
-
----
-
-**Made with ❤️ for the Avalonia UI community**
+- [Repository](https://github.com/JonMichaelSales/AvaloniaThemeManager)
+- [Issues](https://github.com/JonMichaelSales/AvaloniaThemeManager/issues)

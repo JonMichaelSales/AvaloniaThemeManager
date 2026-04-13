@@ -34,13 +34,32 @@ namespace AvaloniaThemeManager.Services
     /// </remarks>
     public class ThemeLoaderService : IThemeLoaderService
     {
-
-        // List of known embedded themes (keep in sync with package)
-        private readonly string[] _embeddedThemes = new[]
+        private static readonly string[] DefaultEmbeddedThemes =
         {
             "Dark", "Light", "Ocean Blue", "Cyberpunk",
             "RetroTerminal", "Purple Haze", "Forest Green", "High Contrast", "ModernIce", "Windows 11 Modern", "Zen Garden","Material Design 3"
         };
+        private readonly IReadOnlyList<string> _embeddedThemes;
+        private readonly Func<Uri, Stream> _openAsset;
+        private readonly Func<Uri, bool> _assetExists;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ThemeLoaderService"/> class.
+        /// </summary>
+        public ThemeLoaderService()
+            : this(DefaultEmbeddedThemes, uri => AssetLoader.Open(uri), uri => AssetLoader.Exists(uri, null))
+        {
+        }
+
+        internal ThemeLoaderService(
+            IReadOnlyList<string> embeddedThemes,
+            Func<Uri, Stream> openAsset,
+            Func<Uri, bool> assetExists)
+        {
+            _embeddedThemes = embeddedThemes ?? throw new ArgumentNullException(nameof(embeddedThemes));
+            _openAsset = openAsset ?? throw new ArgumentNullException(nameof(openAsset));
+            _assetExists = assetExists ?? throw new ArgumentNullException(nameof(assetExists));
+        }
 
         /// <summary>
         /// Loads a collection of <see cref="Skin"/> objects from the specified root directory.
@@ -69,7 +88,7 @@ namespace AvaloniaThemeManager.Services
 
                 try
                 {
-                    using var stream = AssetLoader.Open(new Uri(themeJsonPath));
+                    using var stream = _openAsset(new Uri(themeJsonPath));
                     using var reader = new StreamReader(stream);
                     var json = reader.ReadToEnd();
 
@@ -88,7 +107,7 @@ namespace AvaloniaThemeManager.Services
                     foreach (var key in controlThemes)
                     {
                         var controlPath = $"{basePath}/ControlThemes/{key}.axaml";
-                        if (AssetLoader.Exists(new Uri(controlPath), null))
+                        if (_assetExists(new Uri(controlPath)))
                         {
                             skin.ControlThemeUris[key] = controlPath;
                         }

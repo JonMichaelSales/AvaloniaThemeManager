@@ -48,27 +48,29 @@ namespace AvaloniaThemeManager.Views
 
         private void ConfigureDialogType()
         {
+            var mainWindow = WindowTools.TryGetMainWindow();
+
             switch (DialogType)
             {
                 case NotificationDialogType.Information:
                     Title = "Information";
                     TitleText.Text = "Information";
                     HeaderIcon.Data = ApplicationIcons.InformationGeometry;
-                    HeaderBorder.Background = WindowTools.GetMainWindow().FindResource("AccentBlueBrush") as IBrush;
+                    HeaderBorder.Background = mainWindow?.FindResource("AccentBlueBrush") as IBrush;
                     break;
 
                 case NotificationDialogType.Warning:
                     Title = "Warning";
                     TitleText.Text = "Warning";
                     HeaderIcon.Data = ApplicationIcons.WarningGeometry;
-                    HeaderBorder.Background = WindowTools.GetMainWindow().FindResource("WarningBrush") as IBrush;
+                    HeaderBorder.Background = mainWindow?.FindResource("WarningBrush") as IBrush;
                     break;
 
                 case NotificationDialogType.Error:
                     Title = "Error";
                     TitleText.Text = "Error";
                     HeaderIcon.Data = ApplicationIcons.ErrorGeometry;
-                    HeaderBorder.Background = WindowTools.GetMainWindow().FindResource("ErrorBrush") as IBrush;
+                    HeaderBorder.Background = mainWindow?.FindResource("ErrorBrush") as IBrush;
                     break;
             }
         }

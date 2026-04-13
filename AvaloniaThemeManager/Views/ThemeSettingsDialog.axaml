@@ -328,7 +328,7 @@
                     Padding="15,8"
                     Background="{DynamicResource BackgroundLightBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
-                    Click="ResetButton_Click"
+                    Command="{Binding ResetThemeCommand}"
                     Content="Reset to Default"
                     Foreground="{DynamicResource TextPrimaryBrush}" />
                 <Button
