@@ -14,7 +14,7 @@
   <PackageLicenseExpression>MIT</PackageLicenseExpression>
   <PackageIcon>icon.png</PackageIcon>
   <PackageReadmeFile>README.md</PackageReadmeFile>
-  <PackageReleaseNotes>Breaking release: migrated SkinManager to DI-only usage, removed singleton-based access, fixed inheritable skin resolution for typography and URI overrides, and hardened package/demo build outputs.</PackageReleaseNotes>
+  <PackageReleaseNotes>Breaking release: migrated to a DI-first API, removed SkinManager singleton access, fixed full-fidelity theme import/export and inheritable typography or URI resolution, unified validation and autofix behavior, and hardened demo plus dialog coverage.</PackageReleaseNotes>
   <Copyright>Copyright (c) 2025 Jon Sales</Copyright>
   <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   <FileVersion>2.0.0.0</FileVersion>

@@ -28,7 +28,7 @@ namespace AvaloniaThemeManager.Icons
         /// </param>
         /// <returns>
         /// A <see cref="Avalonia.Media.Geometry"/> object representing the icon associated with the file type.
-        /// </returns>0
+        /// </returns>
         Geometry GetFileTypeIcon(string fileName);
         /// <summary>
         /// Retrieves the geometry representation of a folder icon.
